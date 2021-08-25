@@ -1,0 +1,18 @@
+{
+  "properties": [
+    {
+      "name": "swagger.application.name",
+      "type": "java.lang.String",
+      "description": "Description for swagger.application.name."
+    },
+    {
+      "name": "swagger.application.description",
+      "type": "java.lang.String",
+      "description": "Description for swagger.application.description."
+    },
+    {
+      "name": "swagger.application.version",
+      "type": "java.lang.String",
+      "description": "Description for swagger.application.version."
+    }
+  ] }

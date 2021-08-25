@@ -16,7 +16,7 @@ public class DemoController {
         return new ResponseEntity<>("Hi there!", HttpStatus.OK);
     }
 
-    @GetMapping("/{name}")
+    @GetMapping("demo/{name}")
     public ResponseEntity<String> sayMyName(@PathVariable String name) {
         return new ResponseEntity<>(String.format("Hello %s", name), HttpStatus.OK);
     }
