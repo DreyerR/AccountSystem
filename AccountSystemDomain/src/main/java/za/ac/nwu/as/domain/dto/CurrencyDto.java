@@ -1,6 +1,5 @@
 package za.ac.nwu.as.domain.dto;
 
-import com.sun.istack.internal.NotNull;
 import za.ac.nwu.as.domain.persistence.Currency;
 import za.ac.nwu.as.domain.persistence.CurrencyType;
 import za.ac.nwu.as.domain.persistence.Member;
