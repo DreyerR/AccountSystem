@@ -45,6 +45,7 @@
             <artifactId>springfox-bean-validators</artifactId>
         </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
