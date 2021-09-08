@@ -1,5 +1,8 @@
 package za.ac.nwu.as.web.sb.controller;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +16,7 @@ import za.ac.nwu.as.logic.flow.FetchMemberFlow;
 import java.util.List;
 
 @RestController
-@RequestMapping("member")
+@RequestMapping("members")
 public class MemberController {
 
     private final FetchMemberFlow fetchMemberFlow;
@@ -23,7 +26,14 @@ public class MemberController {
         this.fetchMemberFlow = fetchMemberFlow;
     }
 
-    @GetMapping("/all")
+    @GetMapping()
+    @ApiOperation(value = "Fetches all the members", notes = "Returns a list of members")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Members Returned Successfully", response = GeneralResponse.class),
+            @ApiResponse(code = 400, message = "Bad Request", response = GeneralResponse.class),
+            @ApiResponse(code = 404, message = "Not Found", response = GeneralResponse.class),
+            @ApiResponse(code = 500, message = "Internal Server Error", response = GeneralResponse.class)
+    })
     public ResponseEntity<GeneralResponse<List<MemberDto>>> fetchAll() {
         List<MemberDto> members = fetchMemberFlow.fetchAllMembers();
         GeneralResponse<List<MemberDto>> response = new GeneralResponse<>(true, members);
