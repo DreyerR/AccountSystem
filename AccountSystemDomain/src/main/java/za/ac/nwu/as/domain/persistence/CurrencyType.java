@@ -47,8 +47,8 @@ public class CurrencyType implements Serializable {
         this.currencyTypeName = currencyTypeName;
     }
 
-    @OneToMany(targetEntity = Transaction.class, fetch = FetchType.LAZY, mappedBy = "currencyType", orphanRemoval = true,
-            cascade = CascadeType.PERSIST)
+    @OneToMany(targetEntity = Transaction.class, fetch = FetchType.LAZY, mappedBy = "currencyType"/*, orphanRemoval = true,
+            cascade = CascadeType.PERSIST*/)
     @JsonManagedReference
     public Set<Transaction> getTransactions() {
         return transactions;
@@ -58,8 +58,8 @@ public class CurrencyType implements Serializable {
         this.transactions = transactions;
     }
 
-    @OneToMany(targetEntity = Currency.class, fetch = FetchType.LAZY, mappedBy = "currencyType", orphanRemoval = true,
-            cascade = CascadeType.PERSIST)
+    @OneToMany(targetEntity = Currency.class, fetch = FetchType.LAZY, mappedBy = "currencyType"/*, orphanRemoval = true,
+            cascade = CascadeType.PERSIST*/)
     @JsonManagedReference
     public Set<Currency> getCurrencies() {
         return currencies;

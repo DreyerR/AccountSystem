@@ -95,8 +95,8 @@ public class Member implements Serializable {
         this.contactNr = contactNr;
     }
 
-    @OneToMany(targetEntity = Transaction.class, fetch = FetchType.LAZY, mappedBy = "member", orphanRemoval = true,
-    cascade = CascadeType.PERSIST)
+    @OneToMany(targetEntity = Transaction.class, fetch = FetchType.LAZY, mappedBy = "member"/*, orphanRemoval = true,
+    cascade = CascadeType.PERSIST*/)
     @JsonManagedReference
     public Set<Transaction> getTransactions() {
         return transactions;
@@ -106,7 +106,7 @@ public class Member implements Serializable {
         this.transactions = transactions;
     }
 
-    @OneToOne(targetEntity = Currency.class, fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToOne(targetEntity = Currency.class, fetch = FetchType.LAZY/*, cascade = CascadeType.PERSIST*/)
     @JoinColumn(name = "currency_id", referencedColumnName = "currency_id")
     @JsonBackReference
     public Currency getCurrency() {
