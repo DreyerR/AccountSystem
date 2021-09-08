@@ -84,10 +84,10 @@ public class TransactionDto implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TransactionDto that = (TransactionDto) o;
-        return Objects.equals(transactionDate, that.transactionDate)
-                && Objects.equals(transactionChange, that.transactionChange)
-                && Objects.equals(transactionTotal, that.transactionTotal)
-                && Objects.equals(member, that.member) && Objects.equals(currencyType, that.currencyType);
+        return transactionDate.equals(that.transactionDate) &&
+                transactionChange.equals(that.transactionChange) &&
+                transactionTotal.equals(that.transactionTotal) &&
+                member.equals(that.member) && currencyType.equals(that.currencyType);
     }
 
     @Override

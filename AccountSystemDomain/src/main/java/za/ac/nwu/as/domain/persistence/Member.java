@@ -1,5 +1,8 @@
 package za.ac.nwu.as.domain.persistence;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -7,12 +10,12 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "MEMBER")
+@Table(name = "member")
 public class Member implements Serializable {
 
     private static final long serialVersionUID = 3119208079893242320L;
 
-    private Long memberId;
+    private Integer memberId;
     private String firstName;
     private String lastName;
     private LocalDate dob;
@@ -24,7 +27,7 @@ public class Member implements Serializable {
     public Member() {
     }
 
-    public Member(Long memberId, String firstName, String lastName, LocalDate dob, String email,
+    public Member(Integer memberId, String firstName, String lastName, LocalDate dob, String email,
                   String contactNr, Set<Transaction> transactions, Currency currency) {
         this.memberId = memberId;
         this.firstName = firstName;
@@ -37,18 +40,17 @@ public class Member implements Serializable {
     }
 
     @Id
-    @SequenceGenerator(name = "MEMBER_ID_SEQ", sequenceName = "MEMBER_ID_SEQ", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MEMBER_ID_SEQ")
-    @Column(name = "MEMBER_ID")
-    public Long getMemberId() {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_id")
+    public Integer getMemberId() {
         return memberId;
     }
 
-    public void setMemberId(Long memberId) {
+    public void setMemberId(Integer memberId) {
         this.memberId = memberId;
     }
 
-    @Column(name = "MEMBER_FIRSTNAME")
+    @Column(name = "member_firstname")
     public String getFirstName() {
         return firstName;
     }
@@ -57,7 +59,7 @@ public class Member implements Serializable {
         this.firstName = firstName;
     }
 
-    @Column(name = "MEMBER_LASTNAME")
+    @Column(name = "member_lastname")
     public String getLastName() {
         return lastName;
     }
@@ -66,7 +68,7 @@ public class Member implements Serializable {
         this.lastName = lastName;
     }
 
-    @Column(name = "MEMBER_DOB")
+    @Column(name = "member_dob")
     public LocalDate getDob() {
         return dob;
     }
@@ -75,7 +77,7 @@ public class Member implements Serializable {
         this.dob = dob;
     }
 
-    @Column(name = "MEMBER_EMAIL")
+    @Column(name = "member_email")
     public String getEmail() {
         return email;
     }
@@ -84,7 +86,7 @@ public class Member implements Serializable {
         this.email = email;
     }
 
-    @Column(name = "MEMBER_CONTACT_NR")
+    @Column(name = "member_contact_nr")
     public String getContactNr() {
         return contactNr;
     }
@@ -95,6 +97,7 @@ public class Member implements Serializable {
 
     @OneToMany(targetEntity = Transaction.class, fetch = FetchType.LAZY, mappedBy = "member", orphanRemoval = true,
     cascade = CascadeType.PERSIST)
+    @JsonManagedReference
     public Set<Transaction> getTransactions() {
         return transactions;
     }
@@ -103,8 +106,9 @@ public class Member implements Serializable {
         this.transactions = transactions;
     }
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CURRENCY_ID")
+    @OneToOne(targetEntity = Currency.class, fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "currency_id", referencedColumnName = "currency_id")
+    @JsonBackReference
     public Currency getCurrency() {
         return currency;
     }
@@ -120,11 +124,12 @@ public class Member implements Serializable {
         Member member = (Member) o;
         return memberId.equals(member.memberId) && firstName.equals(member.firstName) &&
                 lastName.equals(member.lastName) && dob.equals(member.dob) &&
-                email.equals(member.email) && contactNr.equals(member.contactNr);
+                email.equals(member.email) && Objects.equals(contactNr, member.contactNr) &&
+                transactions.equals(member.transactions) && currency.equals(member.currency);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(memberId, firstName, lastName, dob, email, contactNr);
+        return Objects.hash(memberId, firstName, lastName, dob, email, contactNr, transactions, currency);
     }
 }

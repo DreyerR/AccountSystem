@@ -106,10 +106,10 @@ public class MemberDto implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MemberDto memberDto = (MemberDto) o;
-        return Objects.equals(firstName, memberDto.firstName) && Objects.equals(lastName, memberDto.lastName)
-                && Objects.equals(dob, memberDto.dob) && Objects.equals(email, memberDto.email)
-                && Objects.equals(contactNr, memberDto.contactNr)
-                && Objects.equals(transactions, memberDto.transactions) && Objects.equals(currency, memberDto.currency);
+        return firstName.equals(memberDto.firstName) && lastName.equals(memberDto.lastName) &&
+                dob.equals(memberDto.dob) && email.equals(memberDto.email) &&
+                contactNr.equals(memberDto.contactNr) && transactions.equals(memberDto.transactions) &&
+                currency.equals(memberDto.currency);
     }
 
     @Override

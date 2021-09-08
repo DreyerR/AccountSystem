@@ -13,21 +13,21 @@ public class CurrencyDto implements Serializable {
     private static final long serialVersionUID = 8044731264669617961L;
 
     private BigDecimal currencyAmount;
-    private Member member;
+//    private Member member;
     private CurrencyType currencyType;
 
     public CurrencyDto() {
     }
 
-    public CurrencyDto(BigDecimal currencyAmount, Member member, CurrencyType currencyType) {
+    public CurrencyDto(BigDecimal currencyAmount, CurrencyType currencyType) {
         this.currencyAmount = currencyAmount;
-        this.member = member;
+//        this.member = member;
         this.currencyType = currencyType;
     }
 
     public CurrencyDto(Currency currency) {
         this.setCurrencyAmount(currency.getCurrencyAmount());
-        this.setMember(currency.getMember());
+//        this.setMember(currency.getMember());
         this.setCurrencyType(currency.getCurrencyType());
     }
 
@@ -39,13 +39,13 @@ public class CurrencyDto implements Serializable {
         this.currencyAmount = currencyAmount;
     }
 
-    public Member getMember() {
-        return member;
-    }
-
-    public void setMember(Member member) {
-        this.member = member;
-    }
+//    public Member getMember() {
+//        return member;
+//    }
+//
+//    public void setMember(Member member) {
+//        this.member = member;
+//    }
 
     public CurrencyType getCurrencyType() {
         return currencyType;
@@ -60,12 +60,13 @@ public class CurrencyDto implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CurrencyDto that = (CurrencyDto) o;
-        return Objects.equals(currencyAmount, that.currencyAmount) && Objects.equals(member, that.member)
-                && Objects.equals(currencyType, that.currencyType);
+        return currencyAmount.equals(that.currencyAmount)
+//                && member.equals(that.member)
+                && currencyType.equals(that.currencyType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(currencyAmount, member, currencyType);
+        return Objects.hash(currencyAmount, currencyType);
     }
 }

@@ -1,5 +1,8 @@
 package za.ac.nwu.as.domain.persistence;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -7,11 +10,11 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
-@Table(name = "TRANSACTION")
+@Table(name = "transaction")
 public class Transaction implements Serializable {
 
     private static final long serialVersionUID = 8739548004412484066L;
-    private Long transactionId;
+    private Integer transactionId;
     private LocalDate transactionDate;
     private String transactionChange;
     private BigDecimal transactionTotal;
@@ -21,7 +24,7 @@ public class Transaction implements Serializable {
     public Transaction() {
     }
 
-    public Transaction(Long transactionId, LocalDate transactionDate, String transactionChange,
+    public Transaction(Integer transactionId, LocalDate transactionDate, String transactionChange,
                        BigDecimal transactionTotal, Member member, CurrencyType currencyType) {
         this.transactionId = transactionId;
         this.transactionDate = transactionDate;
@@ -32,18 +35,17 @@ public class Transaction implements Serializable {
     }
 
     @Id
-    @SequenceGenerator(name = "TRANSACTION_ID_SEQ", sequenceName = "TRANSACTION_ID_SEQ", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "TRANSACTION_ID_SEQ")
-    @Column(name = "TRANSACTION_ID")
-    public Long getTransactionId() {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "transaction_id")
+    public Integer getTransactionId() {
         return transactionId;
     }
 
-    public void setTransactionId(Long transactionId) {
+    public void setTransactionId(Integer transactionId) {
         this.transactionId = transactionId;
     }
 
-    @Column(name = "TRANSACTION_DATE")
+    @Column(name = "transaction_date")
     public LocalDate getTransactionDate() {
         return transactionDate;
     }
@@ -52,7 +54,7 @@ public class Transaction implements Serializable {
         this.transactionDate = transactionDate;
     }
 
-    @Column(name = "TRANSACTION_CHANGE")
+    @Column(name = "transaction_change")
     public String getTransactionChange() {
         return transactionChange;
     }
@@ -61,7 +63,7 @@ public class Transaction implements Serializable {
         this.transactionChange = transactionChange;
     }
 
-    @Column(name = "TRANSACTION_TOTAL")
+    @Column(name = "transaction_total")
     public BigDecimal getTransactionTotal() {
         return transactionTotal;
     }
@@ -70,8 +72,9 @@ public class Transaction implements Serializable {
         this.transactionTotal = transactionTotal;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MEMBER_ID")
+    @ManyToOne(targetEntity = Member.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    @JsonBackReference
     public Member getMember() {
         return member;
     }
@@ -80,8 +83,9 @@ public class Transaction implements Serializable {
         this.member = member;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CT_ID")
+    @ManyToOne(targetEntity = CurrencyType.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ct_id")
+    @JsonBackReference
     public CurrencyType getCurrencyType() {
         return currencyType;
     }
@@ -95,12 +99,15 @@ public class Transaction implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Transaction that = (Transaction) o;
-        return transactionId.equals(that.transactionId) && transactionDate.equals(that.transactionDate) &&
-                transactionChange.equals(that.transactionChange) && transactionTotal.equals(that.transactionTotal);
+        return Objects.equals(transactionId, that.transactionId) &&
+                Objects.equals(transactionDate, that.transactionDate) &&
+                Objects.equals(transactionChange, that.transactionChange) &&
+                Objects.equals(transactionTotal, that.transactionTotal) &&
+                Objects.equals(member, that.member) && Objects.equals(currencyType, that.currencyType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(transactionId, transactionDate, transactionChange, transactionTotal);
+        return Objects.hash(transactionId, transactionDate, transactionChange, transactionTotal, member, currencyType);
     }
 }

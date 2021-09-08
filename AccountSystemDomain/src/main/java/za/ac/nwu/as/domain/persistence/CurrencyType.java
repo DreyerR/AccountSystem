@@ -1,17 +1,20 @@
 package za.ac.nwu.as.domain.persistence;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "CURRENCY_TYPE")
+@Table(name = "currencytype")
 public class CurrencyType implements Serializable {
 
     private static final long serialVersionUID = 3728128313540771856L;
 
-    private Long currencyTypeId;
+    private Integer currencyTypeId;
     private String currencyTypeName;
     private Set<Transaction> transactions;
     private Set<Currency> currencies;
@@ -19,24 +22,23 @@ public class CurrencyType implements Serializable {
     public CurrencyType() {
     }
 
-    public CurrencyType(Long currencyTypeId, String currencyTypeName) {
+    public CurrencyType(Integer currencyTypeId, String currencyTypeName) {
         this.currencyTypeId = currencyTypeId;
         this.currencyTypeName = currencyTypeName;
     }
 
     @Id
-    @SequenceGenerator(name = "CT_ID_SEQ", sequenceName = "CT_ID_SEQ", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "CT_ID_SEQ")
-    @Column(name = "CT_ID")
-    public Long getCurrencyTypeId() {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ct_id")
+    public Integer getCurrencyTypeId() {
         return currencyTypeId;
     }
 
-    public void setCurrencyTypeId(Long currencyTypeId) {
+    public void setCurrencyTypeId(Integer currencyTypeId) {
         this.currencyTypeId = currencyTypeId;
     }
 
-    @Column(name = "CT_NAME")
+    @Column(name = "ct_name")
     public String getCurrencyTypeName() {
         return currencyTypeName;
     }
@@ -47,6 +49,7 @@ public class CurrencyType implements Serializable {
 
     @OneToMany(targetEntity = Transaction.class, fetch = FetchType.LAZY, mappedBy = "currencyType", orphanRemoval = true,
             cascade = CascadeType.PERSIST)
+    @JsonManagedReference
     public Set<Transaction> getTransactions() {
         return transactions;
     }
@@ -57,6 +60,7 @@ public class CurrencyType implements Serializable {
 
     @OneToMany(targetEntity = Currency.class, fetch = FetchType.LAZY, mappedBy = "currencyType", orphanRemoval = true,
             cascade = CascadeType.PERSIST)
+    @JsonManagedReference
     public Set<Currency> getCurrencies() {
         return currencies;
     }

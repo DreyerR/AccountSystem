@@ -1,17 +1,20 @@
 package za.ac.nwu.as.domain.persistence;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
 
 @Entity
-@Table(name = "CURRENCY")
+@Table(name = "currency")
 public class Currency implements Serializable {
 
     private static final long serialVersionUID = -6983561962347930257L;
 
-    private Long currencyId;
+    private Integer currencyId;
     private BigDecimal currencyAmount;
     private Member member;
     private CurrencyType currencyType;
@@ -19,7 +22,7 @@ public class Currency implements Serializable {
     public Currency() {
     }
 
-    public Currency(Long currencyId, BigDecimal currencyAmount, Member member, CurrencyType currencyType) {
+    public Currency(Integer currencyId, BigDecimal currencyAmount, Member member, CurrencyType currencyType) {
         this.currencyId = currencyId;
         this.currencyAmount = currencyAmount;
         this.member = member;
@@ -27,18 +30,17 @@ public class Currency implements Serializable {
     }
 
     @Id
-    @SequenceGenerator(name = "CURRENCY_ID_SEQ", sequenceName = "CURRENCY_ID_SEQ", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "CURRENCY_ID_SEQ")
-    @Column(name = "CURRENCY_ID")
-    public Long getCurrencyId() {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "currency_id")
+    public Integer getCurrencyId() {
         return currencyId;
     }
 
-    public void setCurrencyId(Long currencyId) {
+    public void setCurrencyId(Integer currencyId) {
         this.currencyId = currencyId;
     }
 
-    @Column(name = "CURRENCY_AMOUNT")
+    @Column(name = "currency_amount")
     public BigDecimal getCurrencyAmount() {
         return currencyAmount;
     }
@@ -47,8 +49,8 @@ public class Currency implements Serializable {
         this.currencyAmount = currencyAmount;
     }
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MEMBER_ID")
+    @OneToOne(targetEntity = Member.class, mappedBy = "currency", fetch = FetchType.LAZY)
+    @JsonBackReference
     public Member getMember() {
         return member;
     }
@@ -57,8 +59,9 @@ public class Currency implements Serializable {
         this.member = member;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CT_ID")
+    @ManyToOne(targetEntity = CurrencyType.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ct_id")
+    @JsonBackReference
     public CurrencyType getCurrencyType() {
         return currencyType;
     }
@@ -72,7 +75,9 @@ public class Currency implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Currency currency = (Currency) o;
-        return currencyId.equals(currency.currencyId) && currencyAmount.equals(currency.currencyAmount) && member.equals(currency.member) && currencyType.equals(currency.currencyType);
+        return Objects.equals(currencyId, currency.currencyId) &&
+                Objects.equals(currencyAmount, currency.currencyAmount) &&
+                Objects.equals(member, currency.member) && Objects.equals(currencyType, currency.currencyType);
     }
 
     @Override
