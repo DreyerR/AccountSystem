@@ -1,8 +1,8 @@
 package za.ac.nwu.as.domain.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import za.ac.nwu.as.domain.persistence.Currency;
 import za.ac.nwu.as.domain.persistence.CurrencyType;
-import za.ac.nwu.as.domain.persistence.Member;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -13,22 +13,29 @@ public class CurrencyDto implements Serializable {
     private static final long serialVersionUID = 8044731264669617961L;
 
     private BigDecimal currencyAmount;
-//    private Member member;
-    private CurrencyType currencyType;
+    private String currencyTypeName;
 
     public CurrencyDto() {
     }
 
-    public CurrencyDto(BigDecimal currencyAmount, CurrencyType currencyType) {
+    public CurrencyDto(BigDecimal currencyAmount, CurrencyTypeDto currencyType) {
         this.currencyAmount = currencyAmount;
-//        this.member = member;
-        this.currencyType = currencyType;
+        this.currencyTypeName = currencyType.getCurrencyTypeName();
     }
 
     public CurrencyDto(Currency currency) {
-        this.setCurrencyAmount(currency.getCurrencyAmount());
-//        this.setMember(currency.getMember());
-        this.setCurrencyType(currency.getCurrencyType());
+        this.currencyAmount = currency.getCurrencyAmount();
+        this.currencyTypeName = currency.getCurrencyType().getCurrencyTypeName();
+    }
+
+    @JsonIgnore
+    public Currency buildCurrency(CurrencyType currencyType) {
+        return new Currency(this.currencyAmount, currencyType);
+    }
+
+    @JsonIgnore
+    public Currency buildCurrency() {
+        return new Currency(this.currencyAmount);
     }
 
     public BigDecimal getCurrencyAmount() {
@@ -39,20 +46,12 @@ public class CurrencyDto implements Serializable {
         this.currencyAmount = currencyAmount;
     }
 
-//    public Member getMember() {
-//        return member;
-//    }
-//
-//    public void setMember(Member member) {
-//        this.member = member;
-//    }
-
-    public CurrencyType getCurrencyType() {
-        return currencyType;
+    public String getCurrencyTypeName() {
+        return currencyTypeName;
     }
 
-    public void setCurrencyType(CurrencyType currencyType) {
-        this.currencyType = currencyType;
+    public void setCurrencyTypeName(String currencyTypeName) {
+        this.currencyTypeName = currencyTypeName;
     }
 
     @Override
@@ -60,13 +59,11 @@ public class CurrencyDto implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CurrencyDto that = (CurrencyDto) o;
-        return currencyAmount.equals(that.currencyAmount)
-//                && member.equals(that.member)
-                && currencyType.equals(that.currencyType);
+        return currencyAmount.equals(that.currencyAmount) && currencyTypeName.equals(that.currencyTypeName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(currencyAmount, currencyType);
+        return Objects.hash(currencyAmount, currencyTypeName);
     }
 }

@@ -13,30 +13,36 @@ public class TransactionDto implements Serializable {
 
     private static final long serialVersionUID = 6772889418823834797L;
 
+    private Integer transactionId;
     private LocalDate transactionDate;
     private String transactionChange;
-    private BigDecimal transactionTotal;
-    private Member member;
-    private CurrencyType currencyType;
+    private MemberDto member;
 
     public TransactionDto() {
     }
 
     public TransactionDto(LocalDate transactionDate, String transactionChange, BigDecimal transactionTotal,
-                          Member member, CurrencyType currencyType) {
+                          MemberDto member, CurrencyTypeDto currencyType) {
         this.transactionDate = transactionDate;
         this.transactionChange = transactionChange;
-        this.transactionTotal = transactionTotal;
         this.member = member;
-        this.currencyType = currencyType;
     }
 
     public TransactionDto(Transaction transaction) {
-        this.setTransactionDate(transaction.getTransactionDate());
-        this.setTransactionChange(transaction.getTransactionChange());
-        this.setTransactionTotal(transaction.getTransactionTotal());
-        this.setMember(transaction.getMember());
-        this.setCurrencyType(transaction.getCurrencyType());
+        this.transactionId = transaction.getTransactionId();
+        this.transactionDate = transaction.getTransactionDate();
+        this.transactionChange = transaction.getTransactionChange();
+        if (null != transaction.getMember()) {
+            this.member = new MemberDto(transaction.getMember());
+        }
+    }
+
+    public Integer getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(Integer transactionId) {
+        this.transactionId = transactionId;
     }
 
     public LocalDate getTransactionDate() {
@@ -55,28 +61,12 @@ public class TransactionDto implements Serializable {
         this.transactionChange = transactionChange;
     }
 
-    public BigDecimal getTransactionTotal() {
-        return transactionTotal;
-    }
-
-    public void setTransactionTotal(BigDecimal transactionTotal) {
-        this.transactionTotal = transactionTotal;
-    }
-
-    public Member getMember() {
+    public MemberDto getMember() {
         return member;
     }
 
-    public void setMember(Member member) {
+    public void setMember(MemberDto member) {
         this.member = member;
-    }
-
-    public CurrencyType getCurrencyType() {
-        return currencyType;
-    }
-
-    public void setCurrencyType(CurrencyType currencyType) {
-        this.currencyType = currencyType;
     }
 
     @Override
@@ -84,14 +74,13 @@ public class TransactionDto implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TransactionDto that = (TransactionDto) o;
-        return transactionDate.equals(that.transactionDate) &&
-                transactionChange.equals(that.transactionChange) &&
-                transactionTotal.equals(that.transactionTotal) &&
-                member.equals(that.member) && currencyType.equals(that.currencyType);
+        return transactionId.equals(that.transactionId) &&
+                transactionDate.equals(that.transactionDate) &&
+                transactionChange.equals(that.transactionChange) && member.equals(that.member);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(transactionDate, transactionChange, transactionTotal, member, currencyType);
+        return Objects.hash(transactionId, transactionDate, transactionChange, member);
     }
 }

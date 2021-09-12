@@ -26,4 +26,9 @@ public class FetchMemberFlowImpl implements FetchMemberFlow {
     public List<MemberDto> fetchAllMembers() {
         return memberTranslator.fetchAllMembers();
     }
+
+    @Override
+    public MemberDto findMemberById(Integer id) {
+        return memberTranslator.fetchMemberById(id);
+    }
 }

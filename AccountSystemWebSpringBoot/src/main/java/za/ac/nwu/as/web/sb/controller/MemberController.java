@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import za.ac.nwu.as.domain.dto.MemberDto;
@@ -38,5 +39,22 @@ public class MemberController {
         List<MemberDto> members = fetchMemberFlow.fetchAllMembers();
         GeneralResponse<List<MemberDto>> response = new GeneralResponse<>(true, members);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    @ApiOperation(value = "Fetches a member by ID", notes = "Returns a single member specified by an ID")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Member Returned Successfully", response = GeneralResponse.class),
+            @ApiResponse(code = 404, message = "Member Not Found", response = GeneralResponse.class)
+    })
+    public ResponseEntity<GeneralResponse<MemberDto>> fetchById(@PathVariable Integer id) {
+        MemberDto memberDto = fetchMemberFlow.findMemberById(id);
+
+        GeneralResponse<MemberDto> response = new GeneralResponse<>(true, memberDto);
+
+        if (null != memberDto)
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        else
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 }

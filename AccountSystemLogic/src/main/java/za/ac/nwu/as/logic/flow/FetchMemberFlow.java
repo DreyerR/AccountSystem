@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface FetchMemberFlow {
     List<MemberDto> fetchAllMembers();
+    MemberDto findMemberById(Integer id);
 }

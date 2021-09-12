@@ -1,13 +1,12 @@
 package za.ac.nwu.as.domain.dto;
 
-import za.ac.nwu.as.domain.persistence.Currency;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import za.ac.nwu.as.domain.persistence.Member;
-import za.ac.nwu.as.domain.persistence.Transaction;
+import za.ac.nwu.as.domain.persistence.Currency;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
-import java.util.Set;
 
 public class MemberDto implements Serializable {
 
@@ -18,31 +17,48 @@ public class MemberDto implements Serializable {
     private LocalDate dob;
     private String email;
     private String contactNr;
-    private Set<Transaction> transactions;
-    private Currency currency;
+    private CurrencyDto currency;
 
     public MemberDto() {
     }
 
-    public MemberDto(String firstName, String lastName, LocalDate dob, String email, String contactNr,
-                     Set<Transaction> transactions, Currency currency) {
+    public MemberDto(String firstName, String lastName, LocalDate dob, String email, String contactNr) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.dob = dob;
         this.email = email;
         this.contactNr = contactNr;
-        this.transactions = transactions;
+    }
+
+    public MemberDto(String firstName, String lastName, LocalDate dob, String email, String contactNr,
+                     CurrencyDto currency) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.dob = dob;
+        this.email = email;
+        this.contactNr = contactNr;
         this.currency = currency;
     }
 
     public MemberDto(Member member) {
-        this.setFirstName(member.getFirstName());
-        this.setLastName(member.getLastName());
-        this.setDob(member.getDob());
-        this.setEmail(member.getEmail());
-        this.setContactNr(member.getContactNr());
-        this.setTransactions(member.getTransactions());
-        this.setCurrency(member.getCurrency());
+        this.firstName = member.getFirstName();
+        this.lastName = member.getLastName();
+        this.dob = member.getDob();
+        this.email = member.getEmail();
+        this.contactNr = member.getContactNr();
+        if (null != member.getCurrency()) {
+            this.currency = new CurrencyDto(member.getCurrency());
+        }
+    }
+
+    @JsonIgnore
+    public Member buildMember(Currency currency) {
+        return new Member(this.firstName, this.lastName, this.dob, this.email, this.contactNr, currency);
+    }
+
+    @JsonIgnore
+    public Member buildMember() {
+        return new Member(this.firstName, this.lastName, this.dob, this.email, this.contactNr);
     }
 
     public String getFirstName() {
@@ -85,19 +101,11 @@ public class MemberDto implements Serializable {
         this.contactNr = contactNr;
     }
 
-    public Set<Transaction> getTransactions() {
-        return transactions;
-    }
-
-    public void setTransactions(Set<Transaction> transactions) {
-        this.transactions = transactions;
-    }
-
-    public Currency getCurrency() {
+    public CurrencyDto getCurrency() {
         return currency;
     }
 
-    public void setCurrency(Currency currency) {
+    public void setCurrency(CurrencyDto currency) {
         this.currency = currency;
     }
 
@@ -108,12 +116,11 @@ public class MemberDto implements Serializable {
         MemberDto memberDto = (MemberDto) o;
         return firstName.equals(memberDto.firstName) && lastName.equals(memberDto.lastName) &&
                 dob.equals(memberDto.dob) && email.equals(memberDto.email) &&
-                contactNr.equals(memberDto.contactNr) && transactions.equals(memberDto.transactions) &&
-                currency.equals(memberDto.currency);
+                Objects.equals(contactNr, memberDto.contactNr) && currency.equals(memberDto.currency);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstName, lastName, dob, email, contactNr, transactions, currency);
+        return Objects.hash(firstName, lastName, dob, email, contactNr, currency);
     }
 }

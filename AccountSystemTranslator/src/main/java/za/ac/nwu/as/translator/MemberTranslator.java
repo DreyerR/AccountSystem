@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface MemberTranslator {
     List<MemberDto> fetchAllMembers();
+    MemberDto fetchMemberById(Integer id);
 }

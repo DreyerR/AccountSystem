@@ -29,6 +29,15 @@ public class Currency implements Serializable {
         this.currencyType = currencyType;
     }
 
+    public Currency(BigDecimal currencyAmount, CurrencyType currencyType) {
+        this.currencyAmount = currencyAmount;
+        this.currencyType = currencyType;
+    }
+
+    public Currency(BigDecimal currencyAmount) {
+        this.currencyAmount = currencyAmount;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "currency_id")
@@ -50,7 +59,6 @@ public class Currency implements Serializable {
     }
 
     @OneToOne(targetEntity = Member.class, mappedBy = "currency", fetch = FetchType.LAZY)
-    @JsonBackReference
     public Member getMember() {
         return member;
     }
@@ -59,9 +67,8 @@ public class Currency implements Serializable {
         this.member = member;
     }
 
-    @ManyToOne(targetEntity = CurrencyType.class, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ct_id")
-    @JsonBackReference
     public CurrencyType getCurrencyType() {
         return currencyType;
     }

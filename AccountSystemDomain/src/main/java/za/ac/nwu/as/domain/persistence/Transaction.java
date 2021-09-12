@@ -17,21 +17,16 @@ public class Transaction implements Serializable {
     private Integer transactionId;
     private LocalDate transactionDate;
     private String transactionChange;
-    private BigDecimal transactionTotal;
     private Member member;
-    private CurrencyType currencyType;
 
     public Transaction() {
     }
 
-    public Transaction(Integer transactionId, LocalDate transactionDate, String transactionChange,
-                       BigDecimal transactionTotal, Member member, CurrencyType currencyType) {
+    public Transaction(Integer transactionId, LocalDate transactionDate, String transactionChange, Member member) {
         this.transactionId = transactionId;
         this.transactionDate = transactionDate;
         this.transactionChange = transactionChange;
-        this.transactionTotal = transactionTotal;
         this.member = member;
-        this.currencyType = currencyType;
     }
 
     @Id
@@ -63,18 +58,8 @@ public class Transaction implements Serializable {
         this.transactionChange = transactionChange;
     }
 
-    @Column(name = "transaction_total")
-    public BigDecimal getTransactionTotal() {
-        return transactionTotal;
-    }
-
-    public void setTransactionTotal(BigDecimal transactionTotal) {
-        this.transactionTotal = transactionTotal;
-    }
-
-    @ManyToOne(targetEntity = Member.class, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
-    @JsonBackReference
     public Member getMember() {
         return member;
     }
@@ -83,31 +68,17 @@ public class Transaction implements Serializable {
         this.member = member;
     }
 
-    @ManyToOne(targetEntity = CurrencyType.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "ct_id")
-    @JsonBackReference
-    public CurrencyType getCurrencyType() {
-        return currencyType;
-    }
-
-    public void setCurrencyType(CurrencyType currencyType) {
-        this.currencyType = currencyType;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Transaction that = (Transaction) o;
-        return Objects.equals(transactionId, that.transactionId) &&
-                Objects.equals(transactionDate, that.transactionDate) &&
-                Objects.equals(transactionChange, that.transactionChange) &&
-                Objects.equals(transactionTotal, that.transactionTotal) &&
-                Objects.equals(member, that.member) && Objects.equals(currencyType, that.currencyType);
+        return transactionId.equals(that.transactionId) && transactionDate.equals(that.transactionDate) &&
+                transactionChange.equals(that.transactionChange) && member.equals(that.member);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(transactionId, transactionDate, transactionChange, transactionTotal, member, currencyType);
+        return Objects.hash(transactionId, transactionDate, transactionChange, member);
     }
 }

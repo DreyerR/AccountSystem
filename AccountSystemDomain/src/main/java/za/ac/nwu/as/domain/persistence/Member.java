@@ -1,8 +1,5 @@
 package za.ac.nwu.as.domain.persistence;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -37,6 +34,23 @@ public class Member implements Serializable {
         this.contactNr = contactNr;
         this.transactions = transactions;
         this.currency = currency;
+    }
+
+    public Member(String firstName, String lastName, LocalDate dob, String email, String contactNr, Currency currency) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.dob = dob;
+        this.email = email;
+        this.contactNr = contactNr;
+        this.currency = currency;
+    }
+
+    public Member(String firstName, String lastName, LocalDate dob, String email, String contactNr) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.dob = dob;
+        this.email = email;
+        this.contactNr = contactNr;
     }
 
     @Id
@@ -95,9 +109,7 @@ public class Member implements Serializable {
         this.contactNr = contactNr;
     }
 
-    @OneToMany(targetEntity = Transaction.class, fetch = FetchType.LAZY, mappedBy = "member"/*, orphanRemoval = true,
-    cascade = CascadeType.PERSIST*/)
-    @JsonManagedReference
+    @OneToMany(targetEntity = Transaction.class, fetch = FetchType.LAZY, mappedBy = "member")
     public Set<Transaction> getTransactions() {
         return transactions;
     }
@@ -106,9 +118,8 @@ public class Member implements Serializable {
         this.transactions = transactions;
     }
 
-    @OneToOne(targetEntity = Currency.class, fetch = FetchType.LAZY/*, cascade = CascadeType.PERSIST*/)
-    @JoinColumn(name = "currency_id", referencedColumnName = "currency_id")
-    @JsonBackReference
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "currency_id")
     public Currency getCurrency() {
         return currency;
     }

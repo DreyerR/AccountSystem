@@ -23,7 +23,6 @@ public class MemberTranslatorImpl implements MemberTranslator {
     @Override
     public List<MemberDto> fetchAllMembers() {
         List<MemberDto> memberDtos = new ArrayList<>();
-
         try {
             for (Member member : memberRepository.findAll()) {
                 memberDtos.add(new MemberDto(member));
@@ -33,8 +32,19 @@ public class MemberTranslatorImpl implements MemberTranslator {
             // TODO: Log
             throw new RuntimeException("MemberTranslator: Unable to read from database", e);
         }
-
         return memberDtos;
+    }
+
+    @Override
+    public MemberDto fetchMemberById(Integer id) {
+        try {
+            Member member = memberRepository.findById(id).orElse(null);
+            return member != null ? new MemberDto(member) : null;
+        }
+        catch (Exception e) {
+            // TODO: Log
+            throw new RuntimeException("MemberTranslator: Unable to find member by ID", e);
+        }
     }
 
 }
