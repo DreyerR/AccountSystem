@@ -47,4 +47,14 @@ public class MemberTranslatorImpl implements MemberTranslator {
         }
     }
 
+    @Override
+    public Member doesMemberExist(Integer id) {
+        try {
+            return memberRepository.findById(id).orElse(null);
+        }
+        catch (Exception e) {
+            // TODO: Log
+            throw new RuntimeException("MemberTranslator: Unable to find member by ID (doesMemberExist)", e);
+        }
+    }
 }

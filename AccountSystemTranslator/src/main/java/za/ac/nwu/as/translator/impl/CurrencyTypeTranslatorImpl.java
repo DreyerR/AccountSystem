@@ -24,7 +24,7 @@ public class CurrencyTypeTranslatorImpl implements CurrencyTypeTranslator {
     @Override
     public List<CurrencyTypeDto> fetchAllCurrencyTypes() {
         try {
-            List<CurrencyType> currencyTypes = currencyTypeRepository.findAll();
+            List<CurrencyType> currencyTypes = currencyTypeRepository.findAllByOrderByCurrencyTypeIdAsc();
             List<CurrencyTypeDto> currencyTypeDtos = new ArrayList<>();
             for (CurrencyType currencyType : currencyTypes) {
                 currencyTypeDtos.add(new CurrencyTypeDto(currencyType));
