@@ -13,5 +13,5 @@ import java.math.BigDecimal;
 public interface CurrencyRepository extends JpaRepository<Currency, Integer> {
     @Modifying
     @Query(value = "update currency c set c.currency_amount = :amount where currency_id = :id", nativeQuery = true)
-    int addCurrency(@Param("id") Integer currencyId, @Param("amount")BigDecimal amount);
+    int updateCurrency(@Param("id") Integer currencyId, @Param("amount") BigDecimal amount);
 }

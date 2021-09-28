@@ -1,6 +1,6 @@
 package za.ac.nwu.as.domain.dto;
 
-import za.ac.nwu.as.domain.persistence.CurrencyType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import za.ac.nwu.as.domain.persistence.Member;
 import za.ac.nwu.as.domain.persistence.Transaction;
 
@@ -35,6 +35,11 @@ public class TransactionDto implements Serializable {
         if (null != transaction.getMember()) {
             this.member = new MemberDto(transaction.getMember());
         }
+    }
+
+    @JsonIgnore
+    public Transaction buildTransaction(Member member) {
+        return new Transaction(this.transactionDate, this.transactionChange, member);
     }
 
     public Integer getTransactionId() {

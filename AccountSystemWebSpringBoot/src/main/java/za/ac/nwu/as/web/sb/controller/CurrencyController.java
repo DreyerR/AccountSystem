@@ -24,25 +24,24 @@ public class CurrencyController {
     }
 
     @PutMapping("/add/{memberId}")
-    @ApiOperation(value = "Updates a member's currency", notes = "Update currency based on the member ID")
+    @ApiOperation(value = "Adds currency to a member's account", notes = "Add currency based on the member ID")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Successfully Added Currency", response = GeneralResponse.class),
             @ApiResponse(code = 204, message = "Could Not Add Currency", response = GeneralResponse.class)
     })
     public ResponseEntity<GeneralResponse<String>> addCurrency(@PathVariable Integer memberId,
                                                        @RequestParam(name = "amount")BigDecimal amount) {
-        boolean isSuccessful = currencyFlow.addCurrency(memberId, amount);
-        String message;
-        HttpStatus status;
-        if (isSuccessful) {
-            message = "Currency added successfully";
-            status = HttpStatus.OK;
-        }
-        else {
-            message = "Currency could not be added";
-            status = HttpStatus.NO_CONTENT;
-        }
-        GeneralResponse<String> generalResponse = new GeneralResponse<>(isSuccessful, message);
-        return new ResponseEntity<>(generalResponse, status);
+        return new ResponseEntity<>(currencyFlow.addCurrency(memberId, amount), HttpStatus.OK);
+    }
+
+    @PutMapping("/sub/{memberId}")
+    @ApiOperation(value = "Subtracts currency from a member's account", notes = "Subtract currency based on the member ID")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Successfully Subtracted Currency", response = GeneralResponse.class),
+            @ApiResponse(code = 204, message = "Could Not Subtract Currency", response = GeneralResponse.class)
+    })
+    public ResponseEntity<GeneralResponse<String>> subtractCurrency(@PathVariable Integer memberId,
+                                                                    @RequestParam(name = "amount")BigDecimal amount) {
+        return new ResponseEntity<>(currencyFlow.subtractCurrency(memberId, amount), HttpStatus.OK);
     }
 }

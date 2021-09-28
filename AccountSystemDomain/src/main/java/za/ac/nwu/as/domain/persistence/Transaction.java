@@ -1,5 +1,7 @@
 package za.ac.nwu.as.domain.persistence;
 
+import za.ac.nwu.as.domain.dto.TransactionDto;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -20,6 +22,12 @@ public class Transaction implements Serializable {
 
     public Transaction(Integer transactionId, LocalDate transactionDate, String transactionChange, Member member) {
         this.transactionId = transactionId;
+        this.transactionDate = transactionDate;
+        this.transactionChange = transactionChange;
+        this.member = member;
+    }
+
+    public Transaction(LocalDate transactionDate, String transactionChange, Member member) {
         this.transactionDate = transactionDate;
         this.transactionChange = transactionChange;
         this.member = member;
