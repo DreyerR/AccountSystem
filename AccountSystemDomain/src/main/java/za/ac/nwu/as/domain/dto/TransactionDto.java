@@ -21,8 +21,20 @@ public class TransactionDto implements Serializable {
     public TransactionDto() {
     }
 
-    public TransactionDto(LocalDate transactionDate, String transactionChange, BigDecimal transactionTotal,
-                          MemberDto member, CurrencyTypeDto currencyType) {
+    public TransactionDto(Integer transactionId, LocalDate transactionDate, String transactionChange, MemberDto member) {
+        this.transactionId = transactionId;
+        this.transactionDate = transactionDate;
+        this.transactionChange = transactionChange;
+        this.member = member;
+    }
+
+    public TransactionDto(Integer transactionId, LocalDate transactionDate, String transactionChange) {
+        this.transactionId = transactionId;
+        this.transactionDate = transactionDate;
+        this.transactionChange = transactionChange;
+    }
+
+    public TransactionDto(LocalDate transactionDate, String transactionChange, MemberDto member) {
         this.transactionDate = transactionDate;
         this.transactionChange = transactionChange;
         this.member = member;
