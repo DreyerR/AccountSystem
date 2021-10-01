@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import za.ac.nwu.as.domain.service.GeneralResponse;
-import za.ac.nwu.as.logic.flow.CurrencyFlow;
+import za.ac.nwu.as.logic.flow.ModifyCurrencyFlow;
 
 import java.math.BigDecimal;
 
@@ -32,7 +32,7 @@ public class CurrencyControllerTest {
     private static final String CURRENCY_CONTROLLER_URL = BASE_URL + "/currency";
 
     @Mock
-    private CurrencyFlow currencyFlow;
+    private ModifyCurrencyFlow modifyCurrencyFlow;
 
     @InjectMocks
     private CurrencyController controller;
@@ -55,7 +55,7 @@ public class CurrencyControllerTest {
         GeneralResponse<String> generalResponse = new GeneralResponse<>(true,
                 "Successfully added 5 currency");
 
-        when(currencyFlow.addCurrency(1, BigDecimal.valueOf(5))).thenReturn(generalResponse);
+        when(modifyCurrencyFlow.addCurrency(1, BigDecimal.valueOf(5))).thenReturn(generalResponse);
 
         MvcResult mvcResult = mockMvc.perform(put(String.format("%s/%s", CURRENCY_CONTROLLER_URL, "add/1"))
                 .param("amount", "5")
@@ -65,7 +65,7 @@ public class CurrencyControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        verify(currencyFlow, times(1)).addCurrency(eq(1), eq(BigDecimal.valueOf(5)));
+        verify(modifyCurrencyFlow, times(1)).addCurrency(eq(1), eq(BigDecimal.valueOf(5)));
         assertEquals(expectedOutput, mvcResult.getResponse().getContentAsString());
     }
 

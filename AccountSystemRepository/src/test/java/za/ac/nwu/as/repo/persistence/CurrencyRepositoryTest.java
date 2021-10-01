@@ -22,10 +22,6 @@ public class CurrencyRepositoryTest {
     @Autowired
     CurrencyRepository currencyRepository;
 
-    @Before
-    public void setUp() throws Exception {
-    }
-
     @After
     public void tearDown() throws Exception {
         currencyRepository = null;

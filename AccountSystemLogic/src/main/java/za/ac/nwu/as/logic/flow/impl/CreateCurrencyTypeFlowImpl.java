@@ -4,25 +4,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import za.ac.nwu.as.domain.dto.CurrencyTypeDto;
 import za.ac.nwu.as.domain.persistence.CurrencyType;
-import za.ac.nwu.as.logic.flow.FetchCurrencyTypeFlow;
+import za.ac.nwu.as.logic.flow.CreateCurrencyTypeFlow;
 import za.ac.nwu.as.translator.CurrencyTypeTranslator;
 
 import javax.transaction.Transactional;
-import java.util.List;
 
 @Transactional
 @Component
-public class FetchCurrencyTypeFlowImpl implements FetchCurrencyTypeFlow {
+public class CreateCurrencyTypeFlowImpl implements CreateCurrencyTypeFlow {
 
     private final CurrencyTypeTranslator currencyTypeTranslator;
 
     @Autowired
-    public FetchCurrencyTypeFlowImpl(CurrencyTypeTranslator currencyTypeTranslator) {
+    public CreateCurrencyTypeFlowImpl(CurrencyTypeTranslator currencyTypeTranslator) {
         this.currencyTypeTranslator = currencyTypeTranslator;
     }
 
     @Override
-    public List<CurrencyTypeDto> fetchAllCurrencyTypes() {
-        return currencyTypeTranslator.fetchAllCurrencyTypes();
+    public CurrencyTypeDto saveCurrencyType(CurrencyTypeDto currencyTypeDto) {
+        currencyTypeDto.setCurrencyTypeId(null);
+        CurrencyType currencyType = currencyTypeTranslator.saveCurrencyType(currencyTypeDto);
+        return new CurrencyTypeDto(currencyType);
     }
 }

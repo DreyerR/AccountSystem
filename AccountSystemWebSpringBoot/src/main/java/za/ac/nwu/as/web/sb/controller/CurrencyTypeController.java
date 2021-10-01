@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import za.ac.nwu.as.domain.dto.CurrencyTypeDto;
 import za.ac.nwu.as.domain.service.GeneralResponse;
+import za.ac.nwu.as.logic.flow.CreateCurrencyTypeFlow;
 import za.ac.nwu.as.logic.flow.FetchCurrencyTypeFlow;
 
 import java.util.List;
@@ -18,10 +19,12 @@ import java.util.List;
 public class CurrencyTypeController {
 
     private final FetchCurrencyTypeFlow fetchCurrencyTypeFlow;
+    private final CreateCurrencyTypeFlow createCurrencyTypeFlow;
 
     @Autowired
-    public CurrencyTypeController(FetchCurrencyTypeFlow fetchCurrencyTypeFlow) {
+    public CurrencyTypeController(FetchCurrencyTypeFlow fetchCurrencyTypeFlow, CreateCurrencyTypeFlow createCurrencyTypeFlow) {
         this.fetchCurrencyTypeFlow = fetchCurrencyTypeFlow;
+        this.createCurrencyTypeFlow = createCurrencyTypeFlow;
     }
 
     @GetMapping("/all")
@@ -41,7 +44,7 @@ public class CurrencyTypeController {
             @ApiResponse(code = 201, message = "Successfully Saved Currency Type", response = GeneralResponse.class)
     })
     public ResponseEntity<GeneralResponse<CurrencyTypeDto>> saveCurrencyType(@RequestBody CurrencyTypeDto currencyTypeDto) {
-        CurrencyTypeDto savedObject = fetchCurrencyTypeFlow.saveCurrencyType(currencyTypeDto);
+        CurrencyTypeDto savedObject = createCurrencyTypeFlow.saveCurrencyType(currencyTypeDto);
         GeneralResponse<CurrencyTypeDto> response = new GeneralResponse<>(true, savedObject);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }

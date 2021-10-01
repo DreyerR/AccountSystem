@@ -46,4 +46,9 @@ public class CurrencyTypeTranslatorImpl implements CurrencyTypeTranslator {
             throw new RuntimeException("CurrencyTypeTranslator: Unable to save currency type", e);
         }
     }
+
+    @Override
+    public CurrencyType fetchCurrencyTypeByName(String currencyTypeName) {
+        return currencyTypeRepository.findCurrencyTypeByCurrencyTypeName(currencyTypeName);
+    }
 }

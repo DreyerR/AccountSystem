@@ -48,7 +48,7 @@ public class MemberTranslatorImpl implements MemberTranslator {
     }
 
     @Override
-    public Member doesMemberExist(Integer id) {
+    public Member fetchMemberByIdPersist(Integer id) {
         try {
             return memberRepository.findById(id).orElse(null);
         }

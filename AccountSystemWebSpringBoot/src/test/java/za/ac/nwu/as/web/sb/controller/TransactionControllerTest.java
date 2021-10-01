@@ -12,15 +12,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import za.ac.nwu.as.domain.dto.MemberDto;
 import za.ac.nwu.as.domain.dto.TransactionDto;
-import za.ac.nwu.as.domain.service.GeneralResponse;
-import za.ac.nwu.as.logic.flow.CurrencyFlow;
 import za.ac.nwu.as.logic.flow.FetchTransactionFlow;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
 

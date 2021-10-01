@@ -6,5 +6,4 @@ import java.util.List;
 
 public interface FetchCurrencyTypeFlow {
     List<CurrencyTypeDto> fetchAllCurrencyTypes();
-    CurrencyTypeDto saveCurrencyType(CurrencyTypeDto currencyTypeDto);
 }

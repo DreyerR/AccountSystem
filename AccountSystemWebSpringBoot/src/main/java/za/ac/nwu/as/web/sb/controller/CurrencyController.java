@@ -7,41 +7,106 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import za.ac.nwu.as.domain.dto.CurrencyDto;
 import za.ac.nwu.as.domain.service.GeneralResponse;
-import za.ac.nwu.as.logic.flow.CurrencyFlow;
+import za.ac.nwu.as.logic.flow.FetchCurrencyFlow;
+import za.ac.nwu.as.logic.flow.ModifyCurrencyFlow;
 
 import java.math.BigDecimal;
+import java.util.Locale;
 
 @RestController
 @RequestMapping("currency")
 public class CurrencyController {
 
-    private final CurrencyFlow currencyFlow;
+    private final ModifyCurrencyFlow modifyCurrencyFlow;
+    private final FetchCurrencyFlow fetchCurrencyFlow;
 
     @Autowired
-    public CurrencyController(CurrencyFlow currencyFlow) {
-        this.currencyFlow = currencyFlow;
+    public CurrencyController(ModifyCurrencyFlow modifyCurrencyFlow, FetchCurrencyFlow fetchCurrencyFlow) {
+        this.modifyCurrencyFlow = modifyCurrencyFlow;
+        this.fetchCurrencyFlow = fetchCurrencyFlow;
     }
 
     @PutMapping("/add/{memberId}")
     @ApiOperation(value = "Adds currency to a member's account", notes = "Add currency based on the member ID")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Successfully Added Currency", response = GeneralResponse.class),
-            @ApiResponse(code = 204, message = "Could Not Add Currency", response = GeneralResponse.class)
+            @ApiResponse(code = 200, message = "Successfully Added Currency", response = GeneralResponse.class)
     })
     public ResponseEntity<GeneralResponse<String>> addCurrency(@PathVariable Integer memberId,
                                                        @RequestParam(name = "amount")BigDecimal amount) {
-        return new ResponseEntity<>(currencyFlow.addCurrency(memberId, amount), HttpStatus.OK);
+        return new ResponseEntity<>(modifyCurrencyFlow.addCurrency(memberId, amount), HttpStatus.OK);
     }
 
     @PutMapping("/sub/{memberId}")
     @ApiOperation(value = "Subtracts currency from a member's account", notes = "Subtract currency based on the member ID")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Successfully Subtracted Currency", response = GeneralResponse.class),
-            @ApiResponse(code = 204, message = "Could Not Subtract Currency", response = GeneralResponse.class)
+            @ApiResponse(code = 200, message = "Successfully Subtracted Currency", response = GeneralResponse.class)
     })
     public ResponseEntity<GeneralResponse<String>> subtractCurrency(@PathVariable Integer memberId,
                                                                     @RequestParam(name = "amount")BigDecimal amount) {
-        return new ResponseEntity<>(currencyFlow.subtractCurrency(memberId, amount), HttpStatus.OK);
+        return new ResponseEntity<>(modifyCurrencyFlow.subtractCurrency(memberId, amount), HttpStatus.OK);
+    }
+
+    @GetMapping("/{currencyId}")
+    @ApiOperation(value = "Returns a currency object", notes = "Returns a currency based on an ID")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returned Currency Successfully "),
+            @ApiResponse(code = 404, message = "Currency Not Found")
+    })
+    public ResponseEntity<GeneralResponse<CurrencyDto>> fetchCurrencyById(@PathVariable Integer currencyId) {
+        HttpStatus httpStatus;
+
+        CurrencyDto currencyDto = fetchCurrencyFlow.fetchCurrencyById(currencyId);
+        if (null != currencyDto)
+            httpStatus = HttpStatus.OK;
+        else
+            httpStatus = HttpStatus.NOT_FOUND;
+
+        GeneralResponse<CurrencyDto> generalResponse = new GeneralResponse<>(true, currencyDto);
+        return new ResponseEntity<>(generalResponse, httpStatus);
+    }
+
+    @GetMapping("")
+    @ApiOperation(value = "Returns a member's currency object", notes = "Returns a currency object based on a member's ID")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returned Currency Successfully"),
+            @ApiResponse(code = 404, message = "Currency Not Found")
+    })
+    public ResponseEntity<GeneralResponse<CurrencyDto>> fetchCurrencyByMemberId(
+            @RequestParam(name = "memberId")Integer memberId) {
+
+        HttpStatus httpStatus = HttpStatus.NOT_FOUND;
+
+        CurrencyDto currencyDto = fetchCurrencyFlow.fetchCurrencyByMemberId(memberId);
+        if (null != currencyDto)
+            httpStatus = HttpStatus.OK;
+
+        GeneralResponse<CurrencyDto> generalResponse = new GeneralResponse<>(true, currencyDto);
+        return new ResponseEntity<>(generalResponse, httpStatus);
+    }
+
+    @PutMapping("/currency-type")
+    public ResponseEntity<GeneralResponse<String>> updateCurrencyTypesByName(
+            @RequestParam(name = "fromCT") String fromCT,
+            @RequestParam(name = "toCT") String toCT) {
+
+        HttpStatus httpStatus = HttpStatus.OK;
+        String message = String.format("Successfully updated currency types from %s to %s",
+                fromCT.toUpperCase(), toCT.toUpperCase());
+
+        int isSuccessful = modifyCurrencyFlow.updateCurrencyTypes(fromCT, toCT);
+
+        if (-1 == isSuccessful) {
+            message = "One or more currency type names could not be found";
+            httpStatus = HttpStatus.NOT_FOUND;
+        }
+        else if (0 == isSuccessful) {
+            message = "Unable to update: One or more currency types not found";
+            httpStatus = HttpStatus.NOT_FOUND;
+        }
+
+        GeneralResponse<String> generalResponse = new GeneralResponse<>(1 >= isSuccessful, message);
+        return new ResponseEntity<>(generalResponse, httpStatus);
     }
 }

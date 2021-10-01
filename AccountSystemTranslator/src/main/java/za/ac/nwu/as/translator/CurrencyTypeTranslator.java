@@ -8,4 +8,5 @@ import java.util.List;
 public interface CurrencyTypeTranslator {
     List<CurrencyTypeDto> fetchAllCurrencyTypes();
     CurrencyType saveCurrencyType(CurrencyTypeDto currencyType);
+    CurrencyType fetchCurrencyTypeByName(String currencyTypeName);
 }

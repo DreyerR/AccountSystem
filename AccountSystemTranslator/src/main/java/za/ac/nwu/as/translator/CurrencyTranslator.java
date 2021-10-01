@@ -1,10 +1,11 @@
 package za.ac.nwu.as.translator;
 
-import za.ac.nwu.as.domain.service.GeneralResponse;
+import za.ac.nwu.as.domain.dto.CurrencyDto;
 
 import java.math.BigDecimal;
 
 public interface CurrencyTranslator {
-    GeneralResponse<String> addCurrency(Integer memberId, BigDecimal amount);
-    GeneralResponse<String> subtractCurrency(Integer memberId, BigDecimal amount);
+    int updateCurrency(Integer memberId, BigDecimal amount);
+    CurrencyDto fetchCurrencyById(Integer currencyId);
+    int updateCurrencyTypes(Integer fromCurrencyTypeId, Integer toCurrencyTypeId);
 }

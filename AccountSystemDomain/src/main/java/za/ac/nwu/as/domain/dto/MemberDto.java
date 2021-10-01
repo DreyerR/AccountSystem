@@ -17,7 +17,6 @@ public class MemberDto implements Serializable {
     private LocalDate dob;
     private String email;
     private String contactNr;
-    private CurrencyDto currency;
 
     public MemberDto() {
     }
@@ -30,25 +29,12 @@ public class MemberDto implements Serializable {
         this.contactNr = contactNr;
     }
 
-    public MemberDto(String firstName, String lastName, LocalDate dob, String email, String contactNr,
-                     CurrencyDto currency) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.dob = dob;
-        this.email = email;
-        this.contactNr = contactNr;
-        this.currency = currency;
-    }
-
     public MemberDto(Member member) {
         this.firstName = member.getFirstName();
         this.lastName = member.getLastName();
         this.dob = member.getDob();
         this.email = member.getEmail();
         this.contactNr = member.getContactNr();
-        if (null != member.getCurrency()) {
-            this.currency = new CurrencyDto(member.getCurrency());
-        }
     }
 
     @JsonIgnore
@@ -101,14 +87,6 @@ public class MemberDto implements Serializable {
         this.contactNr = contactNr;
     }
 
-    public CurrencyDto getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(CurrencyDto currency) {
-        this.currency = currency;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -116,11 +94,11 @@ public class MemberDto implements Serializable {
         MemberDto memberDto = (MemberDto) o;
         return firstName.equals(memberDto.firstName) && lastName.equals(memberDto.lastName) &&
                 dob.equals(memberDto.dob) && email.equals(memberDto.email) &&
-                Objects.equals(contactNr, memberDto.contactNr) && currency.equals(memberDto.currency);
+                Objects.equals(contactNr, memberDto.contactNr);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstName, lastName, dob, email, contactNr, currency);
+        return Objects.hash(firstName, lastName, dob, email, contactNr);
     }
 }

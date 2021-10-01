@@ -14,4 +14,8 @@ public interface CurrencyRepository extends JpaRepository<Currency, Integer> {
     @Modifying
     @Query(value = "update currency c set c.currency_amount = :amount where currency_id = :id", nativeQuery = true)
     int updateCurrency(@Param("id") Integer currencyId, @Param("amount") BigDecimal amount);
+
+    @Modifying
+    @Query(value = "update currency c set c.ct_id = :to where c.ct_id = :from", nativeQuery = true)
+    int updateCurrencyTypes(@Param("to") Integer toCurrencyType, @Param("from") Integer fromCurrencyType);
 }
