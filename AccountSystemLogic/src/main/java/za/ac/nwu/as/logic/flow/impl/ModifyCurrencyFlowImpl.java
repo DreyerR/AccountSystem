@@ -1,5 +1,7 @@
 package za.ac.nwu.as.logic.flow.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import za.ac.nwu.as.domain.persistence.CurrencyType;
@@ -19,6 +21,8 @@ import java.time.LocalDate;
 @Transactional
 @Component
 public class ModifyCurrencyFlowImpl implements ModifyCurrencyFlow {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ModifyCurrencyFlowImpl.class);
 
     private final CurrencyTranslator currencyTranslator;
     private final MemberTranslator memberTranslator;
@@ -40,6 +44,7 @@ public class ModifyCurrencyFlowImpl implements ModifyCurrencyFlow {
             boolean isSuccessful = false;
             String message;
 
+            LOGGER.info("Adding {} currency to member with ID {}",amount, memberId);
             Member doesMemberExist = memberTranslator.fetchMemberByIdPersist(memberId);
             if (null != doesMemberExist) {
                 // Insert transaction
@@ -51,26 +56,36 @@ public class ModifyCurrencyFlowImpl implements ModifyCurrencyFlow {
 
                 // Update currency
                 if (null != transaction) { // If the transaction was successful, update currency
+                    LOGGER.info("Transaction created: {}", transaction);
                     Integer currencyId = doesMemberExist.getCurrency().getCurrencyId();
                     BigDecimal currencyAmount = doesMemberExist.getCurrency().getCurrencyAmount().add(amount);
 
+                    LOGGER.info("Updating currency with ID {} to {}", currencyId, currencyAmount);
+
                     isSuccessful = currencyTranslator.updateCurrency(currencyId, currencyAmount) == 1;
-                    if (isSuccessful)
+                    if (isSuccessful) {
                         message = "Successfully added " + amount + " currency";
-                    else
+                        LOGGER.info("Currency with ID {} updated successfully", currencyId);
+                    }
+                    else {
                         message = "Error: Could not update currency in database";
+                        LOGGER.warn("Unable to update currency in database: isSuccessful = {}", false);
+                    }
                 }
                 else {
                     message = "Error: Unable to insert transaction. Operation aborted";
+                    LOGGER.warn("Failed to create transaction");
                 }
             }
             else {
                 message = String.format("Member with ID %d does not exist", memberId);
+                LOGGER.warn("Member with ID {} does not exist", memberId);
             }
 
             return new GeneralResponse<>(isSuccessful, message);
         }
         catch (Exception e) {
+            LOGGER.error("RuntimeException: {}", e.getMessage());
             throw new RuntimeException("CurrencyTranslator: Unable to add currency", e);
         }
     }
@@ -81,6 +96,7 @@ public class ModifyCurrencyFlowImpl implements ModifyCurrencyFlow {
             boolean isSuccessful = false;
             String message;
 
+            LOGGER.info("Subtracting {} currency from member with ID {}",amount, memberId);
             Member doesMemberExist = memberTranslator.fetchMemberByIdPersist(memberId);
             if (null != doesMemberExist) {
                 BigDecimal currencyAmount = doesMemberExist.getCurrency().getCurrencyAmount();
@@ -94,31 +110,39 @@ public class ModifyCurrencyFlowImpl implements ModifyCurrencyFlow {
 
                     // Update currency
                     if (null != transaction) {
+                        LOGGER.info("Transaction created: {}", transaction);
                         Integer currencyId = doesMemberExist.getCurrency().getCurrencyId();
                         currencyAmount = currencyAmount.subtract(amount);
 
                         isSuccessful = currencyTranslator.updateCurrency(currencyId, currencyAmount) == 1;
-                        if (isSuccessful)
+                        if (isSuccessful) {
                             message = "Successfully subtracted " + amount + " currency";
-                        else
+                            LOGGER.info("Currency with ID {} updated successfully", currencyId);
+                        }
+                        else {
                             message = "Error: Could not update currency in database";
+                            LOGGER.warn("Unable to update currency in database: isSuccessful = {}", false);
+                        }
                     }
                     else {
                         message = "Error: Unable to insert transaction. Operation aborted";
+                        LOGGER.warn("Failed to create transaction");
                     }
                 }
                 else {
                     message = "Unable to subtract: Insufficient funds";
+                    LOGGER.warn("Could not subtract currency: Insufficient funds");
                 }
             }
             else {
                 message = String.format("Member with ID %d does not exist", memberId);
+                LOGGER.warn("Member with ID {} does not exist", memberId);
             }
 
             return new GeneralResponse<>(isSuccessful, message);
         }
         catch (Exception e) {
-            // TODO: Log
+            LOGGER.error("RuntimeException: {}", e.getMessage());
             throw new RuntimeException("ModifyCurrencyTranslator: Unable to subtract currency", e);
         }
     }
@@ -129,13 +153,19 @@ public class ModifyCurrencyFlowImpl implements ModifyCurrencyFlow {
             CurrencyType fromCurrencyType = currencyTypeTranslator.fetchCurrencyTypeByName(fromCT);
             CurrencyType toCurrencyType = currencyTypeTranslator.fetchCurrencyTypeByName(toCT);
 
+            LOGGER.info("Attempting to update currency types from {} to {}", fromCT, toCT);
+
             if (null != fromCurrencyType && null != toCurrencyType) {
+                LOGGER.info("From currency type: {}", fromCurrencyType);
+                LOGGER.info("To currency type: {}", toCurrencyType);
                 return currencyTranslator.updateCurrencyTypes(fromCurrencyType.getCurrencyTypeId(),
                         toCurrencyType.getCurrencyTypeId());
             }
+            LOGGER.warn("One or more currency types not found: FromCT - {} or ToCT - {}", fromCurrencyType, toCurrencyType);
             return -1; // If one or both of the currency types cannot be found
         }
         catch (Exception e) {
+            LOGGER.error("RuntimeException: {}", e.getMessage());
             throw new RuntimeException("ModifyCurrencyTranslator: Unable to update currency types", e);
         }
     }

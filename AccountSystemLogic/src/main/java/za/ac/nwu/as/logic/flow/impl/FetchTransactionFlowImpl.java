@@ -1,5 +1,7 @@
 package za.ac.nwu.as.logic.flow.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import za.ac.nwu.as.domain.dto.TransactionDto;
@@ -12,6 +14,8 @@ import javax.transaction.Transactional;
 @Component
 public class FetchTransactionFlowImpl implements FetchTransactionFlow {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(FetchTransactionFlowImpl.class);
+
     private final TransactionTranslator transactionTranslator;
 
     @Autowired
@@ -21,6 +25,7 @@ public class FetchTransactionFlowImpl implements FetchTransactionFlow {
 
     @Override
     public TransactionDto findTransactionById(Integer id) {
+        LOGGER.info("Fetching transaction with ID {}", id);
         return transactionTranslator.findTransactionById(id);
     }
 }

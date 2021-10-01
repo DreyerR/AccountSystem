@@ -1,5 +1,7 @@
 package za.ac.nwu.as.logic.flow.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import za.ac.nwu.as.domain.dto.MemberDto;
@@ -15,6 +17,8 @@ import java.util.List;
 @Component
 public class FetchMemberFlowImpl implements FetchMemberFlow {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(FetchMemberFlowImpl.class);
+
     private final MemberTranslator memberTranslator;
 
     @Autowired
@@ -24,11 +28,13 @@ public class FetchMemberFlowImpl implements FetchMemberFlow {
 
     @Override
     public List<MemberDto> fetchAllMembers() {
+        LOGGER.info("Fetching all the members");
         return memberTranslator.fetchAllMembers();
     }
 
     @Override
     public MemberDto findMemberById(Integer id) {
+        LOGGER.info("Fetching member ID {}", id);
         return memberTranslator.fetchMemberById(id);
     }
 }
