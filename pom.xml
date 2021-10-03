@@ -23,7 +23,7 @@
         <springfox-swagger.version>2.9.2</springfox-swagger.version>
         <swagger.version>1.5.20</swagger.version>
 
-        <haltOnFailure>false</haltOnFailure>
+        <haltOnFailure>true</haltOnFailure>
     </properties>
 
     <modules>
@@ -105,8 +105,7 @@
                                     <exclude>za.ac.nwu.as.logic.config.LogicConfig</exclude>
                                     <exclude>za.ac.nwu.as.repo.config.RepositoryConfig</exclude>
                                     <exclude>za.ac.nwu.as.translator.config.TranslatorConfig</exclude>
-                                    <exclude>za.ac.nwu.as.web.sb.config.WebConfig</exclude>
-                                    <exclude>za.ac.nwu.as.web.sb.config.SwaggerConfiguration</exclude>
+                                    <exclude>za.ac.nwu.as.web.sb.config.*</exclude>
                                     <exclude>za.ac.nwu.as.web.sb.RestServiceApplication</exclude>
                                 </excludes>
                                 <limits>

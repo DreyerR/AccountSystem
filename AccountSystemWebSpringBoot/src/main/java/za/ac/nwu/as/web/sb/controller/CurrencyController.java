@@ -55,13 +55,11 @@ public class CurrencyController {
             @ApiResponse(code = 404, message = "Currency Not Found")
     })
     public ResponseEntity<GeneralResponse<CurrencyDto>> fetchCurrencyById(@PathVariable Integer currencyId) {
-        HttpStatus httpStatus;
+        HttpStatus httpStatus = HttpStatus.NOT_FOUND;
 
         CurrencyDto currencyDto = fetchCurrencyFlow.fetchCurrencyById(currencyId);
         if (null != currencyDto)
             httpStatus = HttpStatus.OK;
-        else
-            httpStatus = HttpStatus.NOT_FOUND;
 
         GeneralResponse<CurrencyDto> generalResponse = new GeneralResponse<>(true, currencyDto);
         return new ResponseEntity<>(generalResponse, httpStatus);
@@ -98,15 +96,15 @@ public class CurrencyController {
         int isSuccessful = modifyCurrencyFlow.updateCurrencyTypes(fromCT, toCT);
 
         if (-1 == isSuccessful) {
-            message = "One or more currency type names could not be found";
+            message = "One or more currency type names could not be found (method)";
             httpStatus = HttpStatus.NOT_FOUND;
         }
         else if (0 == isSuccessful) {
-            message = "Unable to update: One or more currency types not found";
+            message = "Unable to update: One or more currency types not found (database)";
             httpStatus = HttpStatus.NOT_FOUND;
         }
 
-        GeneralResponse<String> generalResponse = new GeneralResponse<>(1 >= isSuccessful, message);
+        GeneralResponse<String> generalResponse = new GeneralResponse<>(isSuccessful >= 1, message);
         return new ResponseEntity<>(generalResponse, httpStatus);
     }
 }

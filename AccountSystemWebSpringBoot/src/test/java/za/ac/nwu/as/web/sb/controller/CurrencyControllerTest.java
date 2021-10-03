@@ -151,4 +151,75 @@ public class CurrencyControllerTest {
         verify(modifyCurrencyFlow, times(1)).updateCurrencyTypes("RAND", "MILES");
         assertEquals(expectedOutput, mvcResult.getResponse().getContentAsString());
     }
+
+    @Test
+    public void updateCurrencyTypesByNameIfMethodNameNotFound() throws Exception {
+        String expectedOutput = "{\"payload\":\"One or more currency type names could not be found (method)\"," +
+                "\"successful\":false}";
+
+        when(modifyCurrencyFlow.updateCurrencyTypes("RAND", "MILES")).thenReturn(-1);
+        MvcResult mvcResult = mockMvc.perform(put(String.format("%s%s", CURRENCY_CONTROLLER_URL, "/currency-type"))
+                        .param("fromCT", "RAND")
+                        .param("toCT", "MILES")
+                        .servletPath(BASE_URL)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andReturn();
+
+        verify(modifyCurrencyFlow, times(1)).updateCurrencyTypes("RAND", "MILES");
+        assertEquals(expectedOutput, mvcResult.getResponse().getContentAsString());
+    }
+
+    @Test
+    public void updateCurrencyTypesByNameIfDatabaseNameNotFound() throws Exception {
+        String expectedOutput = "{\"payload\":\"Unable to update: One or more currency types not found (database)\"," +
+                "\"successful\":false}";
+
+        when(modifyCurrencyFlow.updateCurrencyTypes("RAND", "MILES")).thenReturn(0);
+        MvcResult mvcResult = mockMvc.perform(put(String.format("%s%s", CURRENCY_CONTROLLER_URL, "/currency-type"))
+                        .param("fromCT", "RAND")
+                        .param("toCT", "MILES")
+                        .servletPath(BASE_URL)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andReturn();
+
+        verify(modifyCurrencyFlow, times(1)).updateCurrencyTypes("RAND", "MILES");
+        assertEquals(expectedOutput, mvcResult.getResponse().getContentAsString());
+    }
+
+    @Test
+    public void fetchCurrencyByIdIfNull() throws Exception {
+        String expectedOutput = "{\"payload\":null,\"successful\":true}";
+
+        when(fetchCurrencyFlow.fetchCurrencyById(4)).thenReturn(null);
+        MvcResult mvcResult = mockMvc.perform(get(String.format("%s/%s", CURRENCY_CONTROLLER_URL, "/4"))
+                        .servletPath(BASE_URL)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andReturn();
+
+        verify(fetchCurrencyFlow, times(1)).fetchCurrencyById(eq(4));
+        assertEquals(expectedOutput, mvcResult.getResponse().getContentAsString());
+    }
+
+    @Test
+    public void fetchCurrencyByMemberIdIfNull() throws Exception {
+        String expectedOutput = "{\"payload\":null,\"successful\":true}";
+
+        when(fetchCurrencyFlow.fetchCurrencyByMemberId(2)).thenReturn(null);
+        MvcResult mvcResult = mockMvc.perform(get(CURRENCY_CONTROLLER_URL)
+                        .param("memberId", "2")
+                        .servletPath(BASE_URL)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andReturn();
+
+        verify(fetchCurrencyFlow, times(1)).fetchCurrencyByMemberId(eq(2));
+        assertEquals(expectedOutput, mvcResult.getResponse().getContentAsString());
+    }
 }

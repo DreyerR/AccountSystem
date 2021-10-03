@@ -48,13 +48,14 @@ public class MemberController {
             @ApiResponse(code = 404, message = "Member Not Found", response = GeneralResponse.class)
     })
     public ResponseEntity<GeneralResponse<MemberDto>> fetchById(@PathVariable Integer id) {
+        HttpStatus httpStatus = HttpStatus.NOT_FOUND;
         MemberDto memberDto = fetchMemberFlow.findMemberById(id);
 
         GeneralResponse<MemberDto> response = new GeneralResponse<>(true, memberDto);
 
         if (null != memberDto)
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        else
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            httpStatus = HttpStatus.OK;
+
+        return new ResponseEntity<>(response, httpStatus);
     }
 }
