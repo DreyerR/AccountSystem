@@ -47,10 +47,6 @@ public class TransactionControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
-    @After
-    public void tearDown() throws Exception {
-    }
-
     @Test
     public void findTransactionById() throws Exception {
         String expectedOutput = "{\"payload\":{\"transactionId\":2,\"transactionDate\":[2021,9,12]," +
@@ -60,15 +56,27 @@ public class TransactionControllerTest {
                 "+30");
 
         when(fetchTransactionFlow.findTransactionById(2)).thenReturn(transactionDto);
-
         MvcResult mvcResult = mockMvc.perform(get(String.format("%s/%s", TRANSACTION_CONTROLLER_URL, "/2"))
-                .servletPath(BASE_URL)
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .servletPath(BASE_URL)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        verify(fetchTransactionFlow, times(1)).findTransactionById(2);
-        assertEquals(expectedOutput, mvcResult.getResponse().getContentAsString());
+            verify(fetchTransactionFlow, times(1)).findTransactionById(2);
+            assertEquals(expectedOutput, mvcResult.getResponse().getContentAsString());
+    }
+
+    @Test
+    public void findTransactionByIdIfNull() throws Exception {
+        when(fetchTransactionFlow.findTransactionById(2)).thenReturn(null);
+        MvcResult mvcResult = mockMvc.perform(get(String.format("%s/%s", TRANSACTION_CONTROLLER_URL, "/2"))
+                        .servletPath(BASE_URL)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andReturn();
+
+        assertEquals("{\"payload\":null,\"successful\":true}", mvcResult.getResponse().getContentAsString());
     }
 }

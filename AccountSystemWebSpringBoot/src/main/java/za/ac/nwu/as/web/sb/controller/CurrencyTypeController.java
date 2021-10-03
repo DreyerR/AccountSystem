@@ -11,6 +11,7 @@ import za.ac.nwu.as.domain.dto.CurrencyTypeDto;
 import za.ac.nwu.as.domain.service.GeneralResponse;
 import za.ac.nwu.as.logic.flow.CreateCurrencyTypeFlow;
 import za.ac.nwu.as.logic.flow.FetchCurrencyTypeFlow;
+import za.ac.nwu.as.logic.flow.ModifyCurrencyTypeFlow;
 
 import java.util.List;
 
@@ -20,11 +21,14 @@ public class CurrencyTypeController {
 
     private final FetchCurrencyTypeFlow fetchCurrencyTypeFlow;
     private final CreateCurrencyTypeFlow createCurrencyTypeFlow;
+    private final ModifyCurrencyTypeFlow modifyCurrencyTypeFlow;
 
     @Autowired
-    public CurrencyTypeController(FetchCurrencyTypeFlow fetchCurrencyTypeFlow, CreateCurrencyTypeFlow createCurrencyTypeFlow) {
+    public CurrencyTypeController(FetchCurrencyTypeFlow fetchCurrencyTypeFlow, CreateCurrencyTypeFlow createCurrencyTypeFlow,
+                                  ModifyCurrencyTypeFlow modifyCurrencyTypeFlow) {
         this.fetchCurrencyTypeFlow = fetchCurrencyTypeFlow;
         this.createCurrencyTypeFlow = createCurrencyTypeFlow;
+        this.modifyCurrencyTypeFlow = modifyCurrencyTypeFlow;
     }
 
     @GetMapping("/all")
@@ -38,7 +42,7 @@ public class CurrencyTypeController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping("")
     @ApiOperation(value = "Saves a new currency type to the database", notes = "Returns the newly created object")
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Successfully Saved Currency Type", response = GeneralResponse.class)
@@ -47,5 +51,12 @@ public class CurrencyTypeController {
         CurrencyTypeDto savedObject = createCurrencyTypeFlow.saveCurrencyType(currencyTypeDto);
         GeneralResponse<CurrencyTypeDto> response = new GeneralResponse<>(true, savedObject);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/delete/{ctId}")
+    public ResponseEntity<GeneralResponse<String>> deleteCurrencyTypeById(@PathVariable Integer ctId) {
+        modifyCurrencyTypeFlow.deleteCurrencyTypeById(ctId);
+        String message = String.format("Successfully deleted currency type with ID %d", ctId);
+        return new ResponseEntity<>(new GeneralResponse<>(true, message), HttpStatus.OK);
     }
 }

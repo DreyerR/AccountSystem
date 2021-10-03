@@ -51,4 +51,9 @@ public class CurrencyTypeTranslatorImpl implements CurrencyTypeTranslator {
     public CurrencyType fetchCurrencyTypeByName(String currencyTypeName) {
         return currencyTypeRepository.findCurrencyTypeByCurrencyTypeName(currencyTypeName);
     }
+
+    @Override
+    public void deleteCurrencyTypeById(Integer ctId) {
+        currencyTypeRepository.deleteById(ctId);
+    }
 }
