@@ -24,6 +24,12 @@ public class CurrencyDto implements Serializable {
         this.currencyTypeName = currencyTypeName;
     }
 
+    public CurrencyDto(BigDecimal currencyAmount, String currencyTypeName, MemberDto memberDto) {
+        this.currencyAmount = currencyAmount;
+        this.currencyTypeName = currencyTypeName;
+        this.memberDto = memberDto;
+    }
+
     public CurrencyDto(BigDecimal currencyAmount, CurrencyTypeDto currencyType, MemberDto memberDto) {
         this.currencyAmount = currencyAmount;
         this.currencyTypeName = currencyType.getCurrencyTypeName();

@@ -38,11 +38,11 @@ public class FetchCurrencyFlowImpl implements FetchCurrencyFlow {
         Member member = memberTranslator.fetchMemberByIdPersist(memberId);
 
         if (null != member) {
-            LOGGER.info("Currency with ID {} returned", member.getCurrency().getCurrencyId());
+//            LOGGER.info("Currency with ID {} returned", member.getCurrency().getCurrencyId());
             return new CurrencyDto(member.getCurrency());
         }
 
-        LOGGER.warn("Currency with member ID {} does not exist", memberId);
+//        LOGGER.warn("Currency with member ID {} does not exist", memberId);
         return null;
     }
 }
