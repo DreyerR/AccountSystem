@@ -34,7 +34,8 @@ public class TransactionTranslatorImpl implements TransactionTranslator {
     }
 
     @Override
-    public Transaction saveTransaction(Transaction transaction) {
-        return transactionRepository.save(transaction);
+    public int saveTransaction(Transaction transaction) {
+        return transactionRepository.saveTransaction(transaction.getTransactionDate(), transaction.getTransactionChange(),
+                transaction.getMember().getMemberId());
     }
 }

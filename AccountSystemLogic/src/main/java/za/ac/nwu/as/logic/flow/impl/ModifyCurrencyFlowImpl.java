@@ -48,14 +48,14 @@ public class ModifyCurrencyFlowImpl implements ModifyCurrencyFlow {
             Member doesMemberExist = memberTranslator.fetchMemberByIdPersist(memberId);
             if (null != doesMemberExist) {
                 // Insert transaction
-                Transaction transaction = transactionTranslator.saveTransaction(new Transaction(
+                int transaction = transactionTranslator.saveTransaction(new Transaction(
                         LocalDate.now(),
                         "+" + amount,
                         doesMemberExist
                 ));
 
                 // Update currency
-                if (null != transaction) { // If the transaction was successful, update currency
+                if (1 == transaction) { // If the transaction was successful, update currency
                     LOGGER.info("Transaction created: {}", transaction);
                     Integer currencyId = doesMemberExist.getCurrency().getCurrencyId();
                     BigDecimal currencyAmount = doesMemberExist.getCurrency().getCurrencyAmount().add(amount);
@@ -86,7 +86,7 @@ public class ModifyCurrencyFlowImpl implements ModifyCurrencyFlow {
         }
         catch (Exception e) {
             LOGGER.error("RuntimeException: {}", e.getMessage());
-            throw new RuntimeException("CurrencyTranslator: Unable to add currency", e);
+            throw new RuntimeException("ModifyCurrencyFlowImpl: Unable to add currency", e);
         }
     }
 
@@ -102,15 +102,15 @@ public class ModifyCurrencyFlowImpl implements ModifyCurrencyFlow {
                 BigDecimal currencyAmount = doesMemberExist.getCurrency().getCurrencyAmount();
                 if (currencyAmount.compareTo(BigDecimal.valueOf(0)) > 0 && currencyAmount.compareTo(amount) >= 0) { // Do they have sufficient funds to subtract currency? And is the amount available >= the amount subtracted?
                     // Insert transaction
-                    Transaction transaction = transactionTranslator.saveTransaction(new Transaction(
+                    int wasSuccessful = transactionTranslator.saveTransaction(new Transaction(
                             LocalDate.now(),
                             "-" + amount,
                             doesMemberExist
                     ));
 
                     // Update currency
-                    if (null != transaction) {
-                        LOGGER.info("Transaction created: {}", transaction);
+                    if (1 == wasSuccessful) {
+                        LOGGER.info("Transaction created successfully");
                         Integer currencyId = doesMemberExist.getCurrency().getCurrencyId();
                         currencyAmount = currencyAmount.subtract(amount);
 
@@ -143,7 +143,7 @@ public class ModifyCurrencyFlowImpl implements ModifyCurrencyFlow {
         }
         catch (Exception e) {
             LOGGER.error("RuntimeException: {}", e.getMessage());
-            throw new RuntimeException("ModifyCurrencyTranslator: Unable to subtract currency", e);
+            throw new RuntimeException("ModifyCurrencyFlowImpl: Unable to subtract currency", e);
         }
     }
 

@@ -4,16 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import za.ac.nwu.as.domain.dto.CurrencyDto;
 import za.ac.nwu.as.domain.persistence.Currency;
-import za.ac.nwu.as.domain.persistence.Member;
-import za.ac.nwu.as.domain.persistence.Transaction;
-import za.ac.nwu.as.domain.service.GeneralResponse;
 import za.ac.nwu.as.repo.persistence.CurrencyRepository;
 import za.ac.nwu.as.translator.CurrencyTranslator;
-import za.ac.nwu.as.translator.MemberTranslator;
-import za.ac.nwu.as.translator.TransactionTranslator;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 @Component
 public class CurrencyTranslatorImpl implements CurrencyTranslator {

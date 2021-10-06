@@ -85,4 +85,14 @@ public class Transaction implements Serializable {
     public int hashCode() {
         return Objects.hash(transactionId, transactionDate, transactionChange, member);
     }
+
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "transactionId=" + transactionId +
+                ", transactionDate=" + transactionDate +
+                ", transactionChange='" + transactionChange + '\'' +
+                ", member=" + member +
+                '}';
+    }
 }
