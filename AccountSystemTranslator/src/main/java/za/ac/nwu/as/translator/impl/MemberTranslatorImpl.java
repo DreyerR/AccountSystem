@@ -1,5 +1,7 @@
 package za.ac.nwu.as.translator.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import za.ac.nwu.as.domain.dto.MemberDto;
@@ -13,6 +15,7 @@ import java.util.List;
 @Component
 public class MemberTranslatorImpl implements MemberTranslator {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MemberTranslatorImpl.class);
     private final MemberRepository memberRepository;
 
     @Autowired
@@ -29,8 +32,8 @@ public class MemberTranslatorImpl implements MemberTranslator {
             }
         }
         catch (Exception e) {
-            // TODO: Log
-            throw new RuntimeException("MemberTranslator: Unable to read from database", e);
+            LOGGER.error("MemberTranslator: Unable to read from database, {}", e.getMessage());
+            throw new RuntimeException("MemberTranslator: Unable to read from database");
         }
         return memberDtos;
     }
@@ -42,8 +45,8 @@ public class MemberTranslatorImpl implements MemberTranslator {
             return member != null ? new MemberDto(member) : null;
         }
         catch (Exception e) {
-            // TODO: Log
-            throw new RuntimeException("MemberTranslator: Unable to find member by ID", e);
+            LOGGER.error("MemberTranslator: Unable to find member by ID, {}", e.getMessage());
+            throw new RuntimeException("MemberTranslator: Unable to find member by ID");
         }
     }
 
@@ -53,8 +56,8 @@ public class MemberTranslatorImpl implements MemberTranslator {
             return memberRepository.findById(id).orElse(null);
         }
         catch (Exception e) {
-            // TODO: Log
-            throw new RuntimeException("MemberTranslator: Unable to find member by ID (doesMemberExist)", e);
+            LOGGER.error("MemberTranslator: Unable to find member by ID, {}", e.getMessage());
+            throw new RuntimeException("MemberTranslator: Unable to find member by ID");
         }
     }
 }

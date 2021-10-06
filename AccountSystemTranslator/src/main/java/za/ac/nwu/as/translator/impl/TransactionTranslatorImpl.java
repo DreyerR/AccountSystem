@@ -1,5 +1,7 @@
 package za.ac.nwu.as.translator.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import za.ac.nwu.as.domain.dto.MemberDto;
@@ -14,6 +16,7 @@ import java.math.BigDecimal;
 @Component
 public class TransactionTranslatorImpl implements TransactionTranslator {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TransactionTranslatorImpl.class);
     private final TransactionRepository transactionRepository;
 
     @Autowired
@@ -28,13 +31,14 @@ public class TransactionTranslatorImpl implements TransactionTranslator {
             return transaction != null ? new TransactionDto(transaction) : null;
         }
         catch (Exception e) {
-            // TODO: Log
+            LOGGER.error("TransactionTranslator: Unable to fetch by Id, {}", e.getMessage());
             throw new RuntimeException("TransactionTranslator: Unable to fetch by Id");
         }
     }
 
     @Override
     public int saveTransaction(Transaction transaction) {
+        LOGGER.info("Attempting to save transaction: {}", transaction);
         return transactionRepository.saveTransaction(transaction.getTransactionDate(), transaction.getTransactionChange(),
                 transaction.getMember().getMemberId());
     }

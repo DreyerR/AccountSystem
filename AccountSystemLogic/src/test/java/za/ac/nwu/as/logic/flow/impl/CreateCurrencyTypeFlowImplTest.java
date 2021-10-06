@@ -24,7 +24,7 @@
 //    @Test
 //    public void saveCurrencyType() {
 //        CurrencyTypeDto currencyTypeDto = new CurrencyTypeDto(3, "PLAYS");
-////        when(currencyTypeTranslator.saveCurrencyType(eq(currencyTypeDto))).thenReturn(currencyTypeDto);
+//        when(currencyTypeTranslator.saveCurrencyType(eq(currencyTypeDto))).thenReturn(currencyTypeDto);
 //        CurrencyTypeDto savedCurrencyTypeDto = flow.saveCurrencyType(currencyTypeDto);
 //        assertNotNull(savedCurrencyTypeDto);
 //        assertEquals(currencyTypeDto.getCurrencyTypeName(), savedCurrencyTypeDto.getCurrencyTypeName());

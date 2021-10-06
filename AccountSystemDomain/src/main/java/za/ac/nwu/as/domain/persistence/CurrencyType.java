@@ -1,8 +1,5 @@
 package za.ac.nwu.as.domain.persistence;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
@@ -64,8 +61,8 @@ public class CurrencyType implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CurrencyType that = (CurrencyType) o;
-        return currencyTypeId.equals(that.currencyTypeId) &&
-                currencyTypeName.equals(that.currencyTypeName) && Objects.equals(currencies, that.currencies);
+        return currencyTypeId.equals(that.currencyTypeId) && currencyTypeName.equals(that.currencyTypeName) &&
+                Objects.equals(currencies, that.currencies);
     }
 
     @Override

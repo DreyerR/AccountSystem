@@ -1,5 +1,7 @@
 package za.ac.nwu.as.translator.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -14,6 +16,7 @@ import java.util.List;
 @Component
 public class CurrencyTypeTranslatorImpl implements CurrencyTypeTranslator {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CurrencyTypeTranslatorImpl.class);
     private final CurrencyTypeRepository currencyTypeRepository;
 
     @Autowired
@@ -29,10 +32,12 @@ public class CurrencyTypeTranslatorImpl implements CurrencyTypeTranslator {
             for (CurrencyType currencyType : currencyTypes) {
                 currencyTypeDtos.add(new CurrencyTypeDto(currencyType));
             }
+            LOGGER.info("Successfully fetched all currency types");
             return currencyTypeDtos;
         }
         catch (Exception e) {
-            throw new RuntimeException("CurrencyTypeTranslator: Unable to fetch currency types", e);
+            LOGGER.error("CurrencyTypeTranslator: Unable to fetch currency types {}", e.getMessage());
+            throw new RuntimeException("CurrencyTypeTranslator: Unable to fetch currency types");
         }
     }
 
@@ -43,17 +48,19 @@ public class CurrencyTypeTranslatorImpl implements CurrencyTypeTranslator {
             return currencyTypeRepository.save(currencyType);
         }
         catch (Exception e) {
-            throw new RuntimeException("CurrencyTypeTranslator: Unable to save currency type", e);
+            LOGGER.error("CurrencyTypeTranslator: Unable to save currency type {}", e.getMessage());
+            throw new RuntimeException("CurrencyTypeTranslator: Unable to save currency type");
         }
     }
 
     @Override
     public CurrencyType fetchCurrencyTypeByName(String currencyTypeName) {
-        return currencyTypeRepository.findCurrencyTypeByCurrencyTypeName(currencyTypeName);
+        return currencyTypeRepository.findCurrencyTypeByName(currencyTypeName);
     }
 
     @Override
     public void deleteCurrencyTypeById(Integer ctId) {
         currencyTypeRepository.deleteById(ctId);
+        LOGGER.warn("Deleted currency type with ID {}", ctId);
     }
 }

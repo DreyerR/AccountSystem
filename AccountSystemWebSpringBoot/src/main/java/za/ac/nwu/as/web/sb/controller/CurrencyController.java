@@ -85,6 +85,11 @@ public class CurrencyController {
     }
 
     @PutMapping("/currency-type")
+    @ApiOperation(value = "Updates currency types", notes = "Updates all the currency types to a new one")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Successfully Updated CurrencyType Names"),
+            @ApiResponse(code = 404, message = "CurrencyType Name(s) Not Found")
+    })
     public ResponseEntity<GeneralResponse<String>> updateCurrencyTypesByName(
             @RequestParam(name = "fromCT") String fromCT,
             @RequestParam(name = "toCT") String toCT) {
@@ -93,7 +98,7 @@ public class CurrencyController {
         String message = String.format("Successfully updated currency types from %s to %s",
                 fromCT.toUpperCase(), toCT.toUpperCase());
 
-        int isSuccessful = modifyCurrencyFlow.updateCurrencyTypes(fromCT, toCT);
+        int isSuccessful = modifyCurrencyFlow.updateCurrencyTypes(fromCT.toUpperCase(), toCT.toUpperCase());
 
         if (-1 == isSuccessful) {
             message = "One or more currency type names could not be found (method)";

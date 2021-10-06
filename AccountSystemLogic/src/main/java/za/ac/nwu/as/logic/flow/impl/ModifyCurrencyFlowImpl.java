@@ -16,6 +16,7 @@ import za.ac.nwu.as.translator.TransactionTranslator;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.time.LocalDate;
 
 @Transactional
@@ -38,6 +39,7 @@ public class ModifyCurrencyFlowImpl implements ModifyCurrencyFlow {
         this.currencyTypeTranslator = currencyTypeTranslator;
     }
 
+    @org.springframework.transaction.annotation.Transactional(rollbackFor = SQLException.class)
     @Override
     public GeneralResponse<String> addCurrency(Integer memberId, BigDecimal amount) {
         try {
@@ -73,8 +75,8 @@ public class ModifyCurrencyFlowImpl implements ModifyCurrencyFlow {
                     }
                 }
                 else {
-                    message = "Error: Unable to insert transaction. Operation aborted";
                     LOGGER.warn("Failed to create transaction");
+                    throw new SQLException("Rollback initiated: Failed to create transaction.");
                 }
             }
             else {
@@ -90,6 +92,7 @@ public class ModifyCurrencyFlowImpl implements ModifyCurrencyFlow {
         }
     }
 
+    @org.springframework.transaction.annotation.Transactional(rollbackFor = SQLException.class)
     @Override
     public GeneralResponse<String> subtractCurrency(Integer memberId, BigDecimal amount) {
         try {
@@ -125,8 +128,9 @@ public class ModifyCurrencyFlowImpl implements ModifyCurrencyFlow {
                         }
                     }
                     else {
-                        message = "Error: Unable to insert transaction. Operation aborted";
-                        LOGGER.warn("Failed to create transaction");
+//                        message = "Error: Unable to insert transaction. Operation aborted";
+                        LOGGER.error("Failed to create transaction");
+                        throw new SQLException("Unable to create transaction. Doing a rollback");
                     }
                 }
                 else {
@@ -156,8 +160,8 @@ public class ModifyCurrencyFlowImpl implements ModifyCurrencyFlow {
             LOGGER.info("Attempting to update currency types from {} to {}", fromCT, toCT);
 
             if (null != fromCurrencyType && null != toCurrencyType) {
-                LOGGER.info("From currency type: {}", fromCurrencyType);
-                LOGGER.info("To currency type: {}", toCurrencyType);
+//                LOGGER.info("From currency type: {}", fromCurrencyType);
+//                LOGGER.info("To currency type: {}", toCurrencyType);
                 return currencyTranslator.updateCurrencyTypes(fromCurrencyType.getCurrencyTypeId(),
                         toCurrencyType.getCurrencyTypeId());
             }
