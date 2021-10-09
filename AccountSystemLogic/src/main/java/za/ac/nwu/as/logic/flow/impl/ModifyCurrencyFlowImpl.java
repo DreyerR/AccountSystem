@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import za.ac.nwu.as.domain.persistence.CurrencyType;
 import za.ac.nwu.as.domain.persistence.Member;
 import za.ac.nwu.as.domain.persistence.Transaction;
@@ -14,7 +15,6 @@ import za.ac.nwu.as.translator.CurrencyTypeTranslator;
 import za.ac.nwu.as.translator.MemberTranslator;
 import za.ac.nwu.as.translator.TransactionTranslator;
 
-import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -32,14 +32,23 @@ public class ModifyCurrencyFlowImpl implements ModifyCurrencyFlow {
 
     @Autowired
     public ModifyCurrencyFlowImpl(CurrencyTranslator currencyTranslator, MemberTranslator memberTranslator,
-                                  TransactionTranslator transactionTranslator, CurrencyTypeTranslator currencyTypeTranslator) {
+                                  TransactionTranslator transactionTranslator,
+                                  CurrencyTypeTranslator currencyTypeTranslator) {
         this.currencyTranslator = currencyTranslator;
         this.memberTranslator = memberTranslator;
         this.transactionTranslator = transactionTranslator;
         this.currencyTypeTranslator = currencyTypeTranslator;
     }
 
-    @org.springframework.transaction.annotation.Transactional(rollbackFor = SQLException.class)
+    public boolean createTransaction(Member member, String change) {
+        return transactionTranslator.saveTransaction(new Transaction(
+                LocalDate.now(),
+                change,
+                member
+        )) != null;
+    }
+
+    @Transactional(rollbackFor = SQLException.class)
     @Override
     public GeneralResponse<String> addCurrency(Integer memberId, BigDecimal amount) {
         try {
@@ -47,20 +56,15 @@ public class ModifyCurrencyFlowImpl implements ModifyCurrencyFlow {
             String message;
 
             LOGGER.info("Adding {} currency to member with ID {}",amount, memberId);
-            Member doesMemberExist = memberTranslator.fetchMemberByIdPersist(memberId);
-            if (null != doesMemberExist) {
+            Member member = memberTranslator.fetchMemberByIdPersist(memberId);
+            if (null != member) {
                 // Insert transaction
-                int transaction = transactionTranslator.saveTransaction(new Transaction(
-                        LocalDate.now(),
-                        "+" + amount,
-                        doesMemberExist
-                ));
+                if (createTransaction(member, "+" + amount)) { // If the transaction was successful, update currency
+                    LOGGER.info("Transaction created");
 
-                // Update currency
-                if (1 == transaction) { // If the transaction was successful, update currency
-                    LOGGER.info("Transaction created: {}", transaction);
-                    Integer currencyId = doesMemberExist.getCurrency().getCurrencyId();
-                    BigDecimal currencyAmount = doesMemberExist.getCurrency().getCurrencyAmount().add(amount);
+                    // Update currency
+                    Integer currencyId = member.getCurrency().getCurrencyId();
+                    BigDecimal currencyAmount = member.getCurrency().getCurrencyAmount().add(amount);
 
                     LOGGER.info("Updating currency with ID {} to {}", currencyId, currencyAmount);
 
@@ -70,8 +74,8 @@ public class ModifyCurrencyFlowImpl implements ModifyCurrencyFlow {
                         LOGGER.info("Currency with ID {} updated successfully", currencyId);
                     }
                     else {
-                        message = "Error: Could not update currency in database";
-                        LOGGER.warn("Unable to update currency in database: isSuccessful = {}", false);
+                        LOGGER.warn("Unable to update currency in database: isSuccessful is false");
+                        throw new SQLException("Rollback initiated: Failed to update currency");
                     }
                 }
                 else {
@@ -88,11 +92,11 @@ public class ModifyCurrencyFlowImpl implements ModifyCurrencyFlow {
         }
         catch (Exception e) {
             LOGGER.error("RuntimeException: {}", e.getMessage());
-            throw new RuntimeException("ModifyCurrencyFlowImpl: Unable to add currency", e);
+            throw new RuntimeException("ModifyCurrencyFlowImpl: Unable to add currency");
         }
     }
 
-    @org.springframework.transaction.annotation.Transactional(rollbackFor = SQLException.class)
+    @Transactional(rollbackFor = SQLException.class)
     @Override
     public GeneralResponse<String> subtractCurrency(Integer memberId, BigDecimal amount) {
         try {
@@ -100,21 +104,14 @@ public class ModifyCurrencyFlowImpl implements ModifyCurrencyFlow {
             String message;
 
             LOGGER.info("Subtracting {} currency from member with ID {}",amount, memberId);
-            Member doesMemberExist = memberTranslator.fetchMemberByIdPersist(memberId);
-            if (null != doesMemberExist) {
-                BigDecimal currencyAmount = doesMemberExist.getCurrency().getCurrencyAmount();
+            Member member = memberTranslator.fetchMemberByIdPersist(memberId);
+            if (null != member) {
+                BigDecimal currencyAmount = member.getCurrency().getCurrencyAmount();
                 if (currencyAmount.compareTo(BigDecimal.valueOf(0)) > 0 && currencyAmount.compareTo(amount) >= 0) { // Do they have sufficient funds to subtract currency? And is the amount available >= the amount subtracted?
                     // Insert transaction
-                    int wasSuccessful = transactionTranslator.saveTransaction(new Transaction(
-                            LocalDate.now(),
-                            "-" + amount,
-                            doesMemberExist
-                    ));
-
-                    // Update currency
-                    if (1 == wasSuccessful) {
+                    if (createTransaction(member, "-" + amount)) {
                         LOGGER.info("Transaction created successfully");
-                        Integer currencyId = doesMemberExist.getCurrency().getCurrencyId();
+                        Integer currencyId = member.getCurrency().getCurrencyId();
                         currencyAmount = currencyAmount.subtract(amount);
 
                         isSuccessful = currencyTranslator.updateCurrency(currencyId, currencyAmount) == 1;
@@ -123,12 +120,11 @@ public class ModifyCurrencyFlowImpl implements ModifyCurrencyFlow {
                             LOGGER.info("Currency with ID {} updated successfully", currencyId);
                         }
                         else {
-                            message = "Error: Could not update currency in database";
-                            LOGGER.warn("Unable to update currency in database: isSuccessful = {}", false);
+                            LOGGER.warn("Unable to update currency in database: isSuccessful is false");
+                            throw new SQLException("Rollback initiated: Failed to update currency");
                         }
                     }
                     else {
-//                        message = "Error: Unable to insert transaction. Operation aborted";
                         LOGGER.error("Failed to create transaction");
                         throw new SQLException("Unable to create transaction. Doing a rollback");
                     }
@@ -160,12 +156,10 @@ public class ModifyCurrencyFlowImpl implements ModifyCurrencyFlow {
             LOGGER.info("Attempting to update currency types from {} to {}", fromCT, toCT);
 
             if (null != fromCurrencyType && null != toCurrencyType) {
-//                LOGGER.info("From currency type: {}", fromCurrencyType);
-//                LOGGER.info("To currency type: {}", toCurrencyType);
                 return currencyTranslator.updateCurrencyTypes(fromCurrencyType.getCurrencyTypeId(),
                         toCurrencyType.getCurrencyTypeId());
             }
-            LOGGER.warn("One or more currency types not found: FromCT - {} or ToCT - {}", fromCurrencyType, toCurrencyType);
+            LOGGER.warn("One or more currency types not found");
             return -1; // If one or both of the currency types cannot be found
         }
         catch (Exception e) {

@@ -11,8 +11,8 @@ import java.time.LocalDate;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Integer> {
-    @Modifying
-    @Query(value = "insert into transaction (transaction_date, transaction_change, member_id) values" +
-            " (:date, :change, :memberId)", nativeQuery = true)
-    int saveTransaction(@Param("date")LocalDate date, @Param("change") String change, @Param("memberId") Integer memberId);
+//    @Modifying
+//    @Query(value = "insert into transaction (transaction_date, transaction_change, member_id) values" +
+//            " (:date, :change, :memberId)", nativeQuery = true)
+//    int saveTransaction(@Param("date")LocalDate date, @Param("change") String change, @Param("memberId") Integer memberId);
 }

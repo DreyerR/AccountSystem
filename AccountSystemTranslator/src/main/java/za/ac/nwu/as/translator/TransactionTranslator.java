@@ -8,5 +8,5 @@ import java.math.BigDecimal;
 
 public interface TransactionTranslator {
     TransactionDto findTransactionById(Integer id);
-    int saveTransaction(Transaction transaction);
+    Transaction saveTransaction(Transaction transaction);
 }

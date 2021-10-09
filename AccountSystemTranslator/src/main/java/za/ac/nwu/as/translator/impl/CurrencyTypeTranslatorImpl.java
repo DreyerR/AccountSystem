@@ -48,7 +48,7 @@ public class CurrencyTypeTranslatorImpl implements CurrencyTypeTranslator {
             return currencyTypeRepository.save(currencyType);
         }
         catch (Exception e) {
-            LOGGER.error("CurrencyTypeTranslator: Unable to save currency type {}", e.getMessage());
+            LOGGER.error("CurrencyTypeTranslator: Unable to save currency type: {}", e.getMessage());
             throw new RuntimeException("CurrencyTypeTranslator: Unable to save currency type");
         }
     }

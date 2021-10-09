@@ -27,7 +27,6 @@ public class CreateCurrencyTypeFlowImpl implements CreateCurrencyTypeFlow {
     @Override
     public CurrencyTypeDto saveCurrencyType(CurrencyTypeDto currencyTypeDto) {
         currencyTypeDto.setCurrencyTypeId(null);
-        LOGGER.info("Save new CurrencyType: {}", currencyTypeDto);
         CurrencyType currencyType = currencyTypeTranslator.saveCurrencyType(currencyTypeDto);
         LOGGER.info("Saved new CurrencyType with ID {}", currencyType.getCurrencyTypeId());
         return new CurrencyTypeDto(currencyType);

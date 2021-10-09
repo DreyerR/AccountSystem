@@ -37,9 +37,7 @@ public class TransactionTranslatorImpl implements TransactionTranslator {
     }
 
     @Override
-    public int saveTransaction(Transaction transaction) {
-        LOGGER.info("Attempting to save transaction: {}", transaction);
-        return transactionRepository.saveTransaction(transaction.getTransactionDate(), transaction.getTransactionChange(),
-                transaction.getMember().getMemberId());
+    public Transaction saveTransaction(Transaction transaction) {
+        return transactionRepository.save(transaction);
     }
 }

@@ -34,15 +34,13 @@ public class FetchCurrencyFlowImpl implements FetchCurrencyFlow {
 
     @Override
     public CurrencyDto fetchCurrencyByMemberId(Integer memberId) {
-        LOGGER.info("Member ID to fetch: {}", memberId);
         Member member = memberTranslator.fetchMemberByIdPersist(memberId);
 
         if (null != member) {
-//            LOGGER.info("Currency with ID {} returned", member.getCurrency().getCurrencyId());
             return new CurrencyDto(member.getCurrency());
         }
 
-//        LOGGER.warn("Currency with member ID {} does not exist", memberId);
+        LOGGER.warn("Currency with member ID {} does not exist", memberId);
         return null;
     }
 }

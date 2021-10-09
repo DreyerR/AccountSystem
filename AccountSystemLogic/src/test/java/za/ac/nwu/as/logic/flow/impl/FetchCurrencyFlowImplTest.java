@@ -23,13 +23,13 @@ import static org.mockito.Mockito.*;
 public class FetchCurrencyFlowImplTest {
 
     @Mock
-    private CurrencyTranslator currencyTranslator;
+    CurrencyTranslator currencyTranslator;
 
     @Mock
-    private MemberTranslator memberTranslator;
+    MemberTranslator memberTranslator;
 
     @InjectMocks
-    private FetchCurrencyFlowImpl flow;
+    FetchCurrencyFlowImpl flow;
 
     @Test
     public void fetchCurrencyById() {
@@ -41,19 +41,18 @@ public class FetchCurrencyFlowImplTest {
         verify(currencyTranslator, times(1)).fetchCurrencyById(anyInt());
     }
 
-//    @Test
-//    public void fetchCurrencyByMemberId() {
-//        Member member = new Member("Rudi", "Dreyer", LocalDate.of(2000, 5, 24),
-//                "rudidreyer7@gmail.com", "0767869466", new Currency(BigDecimal.valueOf(50),
-//                new CurrencyType("MILES")));
-//        lenient().when(memberTranslator.fetchMemberByIdPersist(1)).thenReturn(member);
-//        lenient().when(flow.fetchCurrencyByMemberId(1)).thenReturn(
-//                new CurrencyDto(member.getCurrency())
-//        );
-//        CurrencyDto currencyDto = flow.fetchCurrencyByMemberId(1);
-//        assertNotNull(currencyDto);
-//        verify(memberTranslator, times(1)).fetchMemberByIdPersist(3);
-//    }
+    @Test
+    public void fetchCurrencyByMemberId() {
+        Member member = new Member("Rudi", "Dreyer", LocalDate.of(2000, 5, 24),
+                "rudidreyer7@gmail.com", "0767869466", new Currency(BigDecimal.valueOf(50),
+                new CurrencyType("MILES")));
+
+        when(memberTranslator.fetchMemberByIdPersist(anyInt())).thenReturn(member);
+        CurrencyDto output = flow.fetchCurrencyByMemberId(anyInt());
+        assertNotNull(output);
+        assertEquals(member.getCurrency().getCurrencyAmount(), output.getCurrencyAmount());
+        verify(memberTranslator, times(1)).fetchMemberByIdPersist(anyInt());
+    }
 
     @Test
     public void fetchCurrencyByMemberIdIfNull() {

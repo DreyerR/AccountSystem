@@ -34,6 +34,11 @@ public class Currency implements Serializable {
         this.currencyType = currencyType;
     }
 
+    public Currency(Integer currencyId, BigDecimal currencyAmount) {
+        this.currencyId = currencyId;
+        this.currencyAmount = currencyAmount;
+    }
+
     public Currency(BigDecimal currencyAmount) {
         this.currencyAmount = currencyAmount;
     }

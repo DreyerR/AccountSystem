@@ -22,11 +22,6 @@ public class CurrencyRepositoryTest {
     @Autowired
     CurrencyRepository currencyRepository;
 
-    @After
-    public void tearDown() throws Exception {
-        currencyRepository = null;
-    }
-
     @Test
     public void updateCurrency() {
         int isSuccessful = currencyRepository.updateCurrency(1, BigDecimal.valueOf(30));
