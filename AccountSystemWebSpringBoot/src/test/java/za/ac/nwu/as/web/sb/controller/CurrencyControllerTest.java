@@ -19,6 +19,7 @@ import za.ac.nwu.as.logic.flow.FetchCurrencyFlow;
 import za.ac.nwu.as.logic.flow.ModifyCurrencyFlow;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
@@ -60,7 +61,7 @@ public class CurrencyControllerTest {
         GeneralResponse<String> generalResponse = new GeneralResponse<>(true,
                 "Successfully added 5 currency");
 
-        when(modifyCurrencyFlow.addCurrency(1, BigDecimal.valueOf(5))).thenReturn(generalResponse);
+        when(modifyCurrencyFlow.addCurrency(1, BigDecimal.valueOf(5), LocalDate.now())).thenReturn(generalResponse);
 
         MvcResult mvcResult = mockMvc.perform(put(String.format("%s/%s", CURRENCY_CONTROLLER_URL, "add/1"))
                 .param("amount", "5")
@@ -70,7 +71,7 @@ public class CurrencyControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        verify(modifyCurrencyFlow, times(1)).addCurrency(eq(1), eq(BigDecimal.valueOf(5)));
+        verify(modifyCurrencyFlow, times(1)).addCurrency(eq(1), eq(BigDecimal.valueOf(5)), LocalDate.now());
         assertEquals(expectedOutput, mvcResult.getResponse().getContentAsString());
     }
 

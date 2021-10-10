@@ -3,7 +3,10 @@ package za.ac.nwu.as.web.sb.controller;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,14 +14,16 @@ import za.ac.nwu.as.domain.dto.CurrencyDto;
 import za.ac.nwu.as.domain.service.GeneralResponse;
 import za.ac.nwu.as.logic.flow.FetchCurrencyFlow;
 import za.ac.nwu.as.logic.flow.ModifyCurrencyFlow;
+import za.ac.nwu.as.logic.flow.impl.FetchCurrencyFlowImpl;
 
 import java.math.BigDecimal;
-import java.util.Locale;
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("currency")
 public class CurrencyController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CurrencyController.class);
     private final ModifyCurrencyFlow modifyCurrencyFlow;
     private final FetchCurrencyFlow fetchCurrencyFlow;
 
@@ -33,9 +38,12 @@ public class CurrencyController {
     @ApiResponses({
             @ApiResponse(code = 200, message = "Successfully Added Currency", response = GeneralResponse.class)
     })
-    public ResponseEntity<GeneralResponse<String>> addCurrency(@PathVariable Integer memberId,
-                                                       @RequestParam(name = "amount")BigDecimal amount) {
-        return new ResponseEntity<>(modifyCurrencyFlow.addCurrency(memberId, amount), HttpStatus.OK);
+    public ResponseEntity<GeneralResponse<String>> addCurrency(
+            @PathVariable Integer memberId,
+            @RequestParam(name = "amount")BigDecimal amount,
+            @RequestParam(name = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+        LOGGER.info("The value of date is {}", date);
+        return new ResponseEntity<>(modifyCurrencyFlow.addCurrency(memberId, amount, date), HttpStatus.OK);
     }
 
     @PutMapping("/sub/{memberId}")

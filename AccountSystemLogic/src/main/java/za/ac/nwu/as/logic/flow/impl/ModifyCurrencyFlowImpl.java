@@ -40,9 +40,10 @@ public class ModifyCurrencyFlowImpl implements ModifyCurrencyFlow {
         this.currencyTypeTranslator = currencyTypeTranslator;
     }
 
-    public boolean createTransaction(Member member, String change) {
+    public boolean createTransaction(Member member, String change, LocalDate date) {
+        date = null != date ? date : LocalDate.now();
         return transactionTranslator.saveTransaction(new Transaction(
-                LocalDate.now(),
+                date,
                 change,
                 member
         )) != null;
@@ -50,7 +51,7 @@ public class ModifyCurrencyFlowImpl implements ModifyCurrencyFlow {
 
     @Transactional(rollbackFor = SQLException.class)
     @Override
-    public GeneralResponse<String> addCurrency(Integer memberId, BigDecimal amount) {
+    public GeneralResponse<String> addCurrency(Integer memberId, BigDecimal amount, LocalDate date) {
         try {
             boolean isSuccessful = false;
             String message;
@@ -59,7 +60,7 @@ public class ModifyCurrencyFlowImpl implements ModifyCurrencyFlow {
             Member member = memberTranslator.fetchMemberByIdPersist(memberId);
             if (null != member) {
                 // Insert transaction
-                if (createTransaction(member, "+" + amount)) { // If the transaction was successful, update currency
+                if (createTransaction(member, "+" + amount, date)) { // If the transaction was successful, update currency
                     LOGGER.info("Transaction created");
 
                     // Update currency
@@ -109,7 +110,7 @@ public class ModifyCurrencyFlowImpl implements ModifyCurrencyFlow {
                 BigDecimal currencyAmount = member.getCurrency().getCurrencyAmount();
                 if (currencyAmount.compareTo(BigDecimal.valueOf(0)) > 0 && currencyAmount.compareTo(amount) >= 0) { // Do they have sufficient funds to subtract currency? And is the amount available >= the amount subtracted?
                     // Insert transaction
-                    if (createTransaction(member, "-" + amount)) {
+                    if (createTransaction(member, "-" + amount, null)) {
                         LOGGER.info("Transaction created successfully");
                         Integer currencyId = member.getCurrency().getCurrencyId();
                         currencyAmount = currencyAmount.subtract(amount);
